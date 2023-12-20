@@ -71,7 +71,7 @@
                               <Label fx:id="labelPolySide" style="-fx-text-fill: white;" text="Poly vee side" GridPane.rowIndex="4" />
                               <Label fx:id="labelNoMDR" style="-fx-text-fill: white;" text="No. of MDR" GridPane.rowIndex="5" />
                               <Label fx:id="labelSpeed" style="-fx-text-fill: white;" text="Speed (m/min)" GridPane.rowIndex="6" />
-                              <Label style="-fx-text-fill: white;" text="Height (mm)" GridPane.rowIndex="7" />
+                              <Label fx:id="labelHeight" style="-fx-text-fill: white;" text="Height (mm)" GridPane.rowIndex="7" />
                               <TextField fx:id="textTitle" GridPane.columnIndex="1" />
                               <ComboBox fx:id="componentWidthComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <ComboBox fx:id="componentLengthComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
@@ -81,10 +81,12 @@
                               <TextField fx:id="textHeight" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                               <TextField fx:id="textSpeed1" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                               <ComboBox fx:id="componentAngleComboBox" prefWidth="150.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label text="Control card type" textFill="WHITE" GridPane.rowIndex="8" />
+                              <Label fx:id="labelControl" text="Control card type" textFill="WHITE" GridPane.rowIndex="8" />
                               <ComboBox fx:id="componentControlComboBox" editable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                               <TextField fx:id="textLength90Transfer" editable="false" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <TextField fx:id="textSpeed2" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <TextField fx:id="textAuxHeight" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <ComboBox fx:id="componentSkewLengthComboBox" prefWidth="150.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                            </children>
                         </GridPane>
                      </children>
@@ -102,7 +104,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#loadMethod" text="Load" />
                   <SeparatorMenuItem mnemonicParsing="false" />
               <MenuItem fx:id="SaveMI" disable="true" mnemonicParsing="false" onAction="#saveMethod" text="Save" />
-                  <MenuItem fx:id="ExportDraftMI" disable="true" mnemonicParsing="false" text="Export draft" />
+                  <MenuItem fx:id="ExportDraftMI" disable="true" mnemonicParsing="false" onAction="#exportMethod" text="Export draft" />
                   <MenuItem fx:id="ExportExcelMI" disable="true" mnemonicParsing="false" text="Export excel" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#quitMethod" text="Quit" />
@@ -111,7 +113,7 @@
             <Menu mnemonicParsing="false" text="Edit">
               <items>
                   <MenuItem fx:id="increaseSizeMI" disable="true" mnemonicParsing="false" onAction="#increaseSizeMethod" text="Increase size" />
-                  <RadioMenuItem fx:id="AlignRMI" mnemonicParsing="false" onAction="#alignMethod" text="Align" />
+                  <RadioMenuItem mnemonicParsing="false" onAction="#alignMethod" text="Align" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="View">

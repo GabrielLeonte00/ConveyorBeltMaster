@@ -4,9 +4,12 @@ import com.convofig.components.*;
 import com.convofig.conveyorbeltmaster.MainApplication;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -16,6 +19,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.*;
 import java.util.Objects;
 import java.util.Optional;
@@ -64,6 +70,8 @@ public class MainView extends MainApplication {
     @FXML
     private ComboBox<String> componentControlComboBox;
     @FXML
+    private ComboBox<String> componentSkewLengthComboBox;
+    @FXML
     private MenuItem zoomInMI;
     @FXML
     private MenuItem zoomOutMI;
@@ -84,6 +92,8 @@ public class MainView extends MainApplication {
     @FXML
     private TextField textHeight;
     @FXML
+    private TextField textAuxHeight;
+    @FXML
     private TextField textLength90Transfer;
     @FXML
     private Label labelLength;
@@ -95,10 +105,14 @@ public class MainView extends MainApplication {
     private Label labelNoMDR;
     @FXML
     private Label labelSpeed;
+    @FXML
+    private Label labelHeight;
+    @FXML
+    private Label labelControl;
 
     @FXML
     public void initialize() {
-        new ConfigurationView(scaleFactor, mainPane, drawPane, componentRegion, componentTypeComboBox, componentWidthComboBox, componentLengthComboBox, componentRollerPitchComboBox, componentPolyVeeSideComboBox, componentNoOfMDRComboBox, textTitle, textSpeed1, textSpeed2, textHeight, componentAngleComboBox, componentControlComboBox);
+        new ConfigurationView(scaleFactor, mainPane, drawPane, componentRegion, componentTypeComboBox, componentWidthComboBox, componentLengthComboBox, componentSkewLengthComboBox, componentRollerPitchComboBox, componentPolyVeeSideComboBox, componentNoOfMDRComboBox, textTitle, textSpeed1, textSpeed2, textHeight, textAuxHeight, componentAngleComboBox, componentControlComboBox);
 
         addMovingDrawingPane();
         getOffsetsForMove();
@@ -145,6 +159,8 @@ public class MainView extends MainApplication {
             componentLengthComboBox.getItems().add(String.valueOf(i));
         }
         componentLengthComboBox.getSelectionModel().select(0);
+        componentSkewLengthComboBox.getItems().addAll("1440", "1800", "2160", "2880");
+        componentSkewLengthComboBox.getSelectionModel().select(0);
         componentRollerPitchComboBox.getItems().addAll("60", "90", "120");
         componentRollerPitchComboBox.getSelectionModel().select(0);
         componentPolyVeeSideComboBox.getItems().addAll("Left", "Right");
@@ -172,11 +188,13 @@ public class MainView extends MainApplication {
         textSpeed1.setTextFormatter(new TextFormatter<>(c -> c.getControlNewText().matches(".{0,5}") ? c : null));
         textSpeed2.setTextFormatter(new TextFormatter<>(c -> c.getControlNewText().matches(".{0,5}") ? c : null));
         textHeight.setTextFormatter(new TextFormatter<>(c -> c.getControlNewText().matches(".{0,5}") ? c : null));
+        textAuxHeight.setTextFormatter(new TextFormatter<>(c -> c.getControlNewText().matches(".{0,5}") ? c : null));
 
         textTitle.setText("A0010");
         textSpeed1.setText("30");
         textSpeed2.setText("0");
         textHeight.setText("700");
+        textAuxHeight.setText("700");
         textLength90Transfer.setText("780");
 
         componentRegion.setPrefWidth((double) Integer.parseInt(componentLengthComboBox.getSelectionModel().getSelectedItem()) * scaleFactor);
@@ -273,13 +291,17 @@ public class MainView extends MainApplication {
             changeAbleConfigurations();
             scrollZoom();
         } else {
-            if (drawPane.getChildren().isEmpty())
+            if (drawPane.getChildren().isEmpty()) {
                 clearDrawPane();
-            else {
+                zoomResetMethod();
+                resetPositionMethod();
+            } else {
                 boolean check = showWarningDialog();
                 if (check) {
                     drawPane.getChildren().clear();
                     clearDrawPane();
+                    zoomResetMethod();
+                    resetPositionMethod();
                 }
             }
         }
@@ -473,13 +495,13 @@ public class MainView extends MainApplication {
         if (selectedFile != null) {
             if (drawPane.getChildren().isEmpty() || drawPane.getChildren().get(0) instanceof ImageView) {
                 drawPane.getChildren().clear();
-                clearDrawPane();
+                newMethod();
                 processFile(selectedFile);
             } else {
                 boolean check = showWarningDialog();
                 if (check) {
                     drawPane.getChildren().clear();
-                    clearDrawPane();
+                    newMethod();
                     processFile(selectedFile);
                 }
             }
@@ -555,7 +577,7 @@ public class MainView extends MainApplication {
             drawPane.getChildren().add(newComponent);
         }
         if (Objects.equals(data[0], "Gravity_roller_conveyor")) {
-            Gravity_roller_conveyor newComponent = new Gravity_roller_conveyor();
+            Gravity_roller_conveyor newComponent = new Gravity_roller_conveyor(Double.parseDouble(data[4]), Integer.parseInt(data[5]), Integer.parseInt(data[6]), Double.parseDouble(data[7]), Double.parseDouble(data[8]), data[9], data[10], data[11], data[12]);
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
@@ -580,7 +602,7 @@ public class MainView extends MainApplication {
             drawPane.getChildren().add(newComponent);
         }
         if (Objects.equals(data[0], "Skew_roller_conveyor")) {
-            Skew_roller_conveyor newComponent = new Skew_roller_conveyor();
+            Skew_roller_conveyor newComponent = new Skew_roller_conveyor(Double.parseDouble(data[4]), Integer.parseInt(data[5]), Integer.parseInt(data[6]), Double.parseDouble(data[7]), Double.parseDouble(data[8]), data[9], data[10], data[11], data[12], data[13], data[14]);
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
@@ -598,6 +620,32 @@ public class MainView extends MainApplication {
         }
     }
 
+    @FXML
+    void exportMethod() {
+        if (!drawPane.getChildren().isEmpty()) {
+            double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+            getExportLimits(x1, y1, x2, y2);
+
+        }
+    }
+
+    void getExportLimits(double x1, double y1, double x2, double y2) {
+        Node component = drawPane.getChildren().get(0);
+        x1 = component.getLayoutX();
+        y1 = component.getLayoutY();
+        x2 = component.getLayoutX() + component.getBoundsInLocal().getWidth();
+        y2 = component.getLayoutY() + component.getBoundsInLocal().getHeight();
+        if (drawPane.getChildren().size() > 1)
+            for (int i = 1; i < drawPane.getChildren().size(); i++)
+                component = drawPane.getChildren().get(i);
+        if (component.getLayoutX() < x1) x1 = component.getLayoutX();
+        if (component.getLayoutY() < y1) y1 = component.getLayoutY();
+        if (component.getLayoutX() + component.getBoundsInLocal().getWidth() > x2)
+            x2 = component.getLayoutX() + component.getBoundsInLocal().getWidth();
+        if (component.getLayoutY() + component.getBoundsInLocal().getHeight() > y2)
+            y2 = component.getLayoutY() + component.getBoundsInLocal().getHeight();
+    }
+
     void changeAbleConfigurations() {
         componentTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             int selectedIndex = componentTypeComboBox.getItems().indexOf(newValue);
@@ -605,6 +653,7 @@ public class MainView extends MainApplication {
                 case 0:
                     //System.out.println("Motorized roller conveyor");
                     componentLengthComboBox.setVisible(true);
+                    componentSkewLengthComboBox.setVisible(false);
                     labelLength.setText("Length (mm)");
                     textLength90Transfer.setVisible(false);
                     componentAngleComboBox.setVisible(false);
@@ -617,17 +666,44 @@ public class MainView extends MainApplication {
                     labelNoMDR.setText("No. of MDR");
                     textSpeed2.setVisible(false);
                     labelSpeed.setText("Speed (m/min)");
+                    labelHeight.setText("Height (mm)");
+                    textAuxHeight.setVisible(false);
+                    textSpeed1.setVisible(true);
+                    labelControl.setDisable(false);
+                    componentControlComboBox.setDisable(false);
                     componentRegion.setPrefWidth((Integer.parseInt(componentLengthComboBox.getSelectionModel().getSelectedItem())) * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
 
                 case 1:
                     //System.out.println("Gravity roller conveyor");
+                    componentLengthComboBox.setVisible(true);
+                    componentSkewLengthComboBox.setVisible(false);
+                    labelLength.setText("Length (mm)");
+                    textLength90Transfer.setVisible(false);
+                    componentAngleComboBox.setVisible(false);
+                    componentRollerPitchComboBox.setVisible(true);
+                    labelPitch.setVisible(true);
+                    componentPolyVeeSideComboBox.setVisible(false);
+                    labelPolySide.setVisible(false);
+                    componentNoOfMDRComboBox.setVisible(false);
+                    labelNoMDR.setVisible(false);
+                    labelNoMDR.setText("No. of MDR");
+                    textSpeed2.setVisible(false);
+                    labelSpeed.setText("Height1 (mm)");
+                    labelHeight.setText("Height2 (mm)");
+                    textAuxHeight.setVisible(true);
+                    textSpeed1.setVisible(true);
+                    labelControl.setDisable(true);
+                    componentControlComboBox.setDisable(true);
+                    componentRegion.setPrefWidth((Integer.parseInt(componentLengthComboBox.getSelectionModel().getSelectedItem())) * scaleFactor);
+                    componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
 
                 case 2:
                     //System.out.println("90 degree transfer module");
                     componentLengthComboBox.setVisible(false);
+                    componentSkewLengthComboBox.setVisible(false);
                     labelLength.setText("Length (mm)");
                     textLength90Transfer.setVisible(true);
                     componentAngleComboBox.setVisible(false);
@@ -637,8 +713,14 @@ public class MainView extends MainApplication {
                     labelPolySide.setVisible(false);
                     componentNoOfMDRComboBox.setVisible(false);
                     textSpeed2.setVisible(true);
+                    textAuxHeight.setVisible(false);
+                    textSpeed1.setVisible(true);
+                    labelNoMDR.setVisible(true);
                     labelNoMDR.setText("B Speed (m/min)");
                     labelSpeed.setText("R Speed (m/min)");
+                    labelHeight.setText("Height (mm)");
+                    labelControl.setDisable(false);
+                    componentControlComboBox.setDisable(false);
                     componentRegion.setPrefWidth(780 * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
@@ -650,6 +732,7 @@ public class MainView extends MainApplication {
                 case 4:
                     //System.out.println("Curve roller conveyor");
                     componentLengthComboBox.setVisible(false);
+                    componentSkewLengthComboBox.setVisible(false);
                     labelLength.setText("Angle");
                     textLength90Transfer.setVisible(false);
                     componentAngleComboBox.setVisible(true);
@@ -661,12 +744,38 @@ public class MainView extends MainApplication {
                     labelNoMDR.setVisible(false);
                     textSpeed2.setVisible(false);
                     labelSpeed.setText("Speed (m/min)");
+                    labelHeight.setText("Height (mm)");
+                    textAuxHeight.setVisible(false);
+                    textSpeed1.setVisible(true);
+                    labelControl.setDisable(false);
+                    componentControlComboBox.setDisable(false);
                     componentRegion.setPrefWidth((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70 + 790) * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70 + 790) * scaleFactor);
                     break;
 
                 case 5:
                     //System.out.println("Skew roller conveyor");
+                    componentLengthComboBox.setVisible(false);
+                    componentSkewLengthComboBox.setVisible(true);
+                    labelLength.setText("Length (mm)");
+                    textLength90Transfer.setVisible(false);
+                    componentAngleComboBox.setVisible(false);
+                    componentRollerPitchComboBox.setVisible(true);
+                    labelPitch.setVisible(true);
+                    componentPolyVeeSideComboBox.setVisible(true);
+                    labelPolySide.setVisible(true);
+                    componentNoOfMDRComboBox.setVisible(false);
+                    labelNoMDR.setVisible(false);
+                    labelNoMDR.setText("No. of MDR");
+                    textSpeed2.setVisible(false);
+                    labelSpeed.setText("Speed (m/min)");
+                    labelHeight.setText("Height (mm)");
+                    textAuxHeight.setVisible(false);
+                    textSpeed1.setVisible(true);
+                    labelControl.setDisable(false);
+                    componentControlComboBox.setDisable(false);
+                    componentRegion.setPrefWidth((Integer.parseInt(componentSkewLengthComboBox.getSelectionModel().getSelectedItem())) * scaleFactor);
+                    componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
 
                 case 6:

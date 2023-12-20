@@ -7,13 +7,14 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.StageStyle;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.util.Optional;
 
 public class ConfigurationView extends MainView {
     private static Pane mainPane, drawPane;
-    private static ComboBox<String> componentTypeComboBox, componentWidthComboBox, componentLengthComboBox, componentRollerPitchComboBox, componentPolyVeeSideComboBox, componentNoOfMDRComboBox, componentAngleComboBox, componentControlComboBox;
-    private static TextField textTitle, textSpeed1, textSpeed2, textHeight;
+    private static ComboBox<String> componentTypeComboBox, componentWidthComboBox, componentLengthComboBox, componentSkewLengthComboBox, componentRollerPitchComboBox, componentPolyVeeSideComboBox, componentNoOfMDRComboBox, componentAngleComboBox, componentControlComboBox;
+    private static TextField textTitle, textSpeed1, textSpeed2, textHeight, textAuxHeight;
     private static Region componentRegion;
     private static double scaleFactor;
     static Boolean align = false;
@@ -21,12 +22,13 @@ public class ConfigurationView extends MainView {
     private static double off_setInitialX;
     private static double off_setInitialY;
 
-    ConfigurationView(double scaleFactor, Pane mainPane, Pane drawPane, Region componentRegion, ComboBox<String> componentTypeComboBox, ComboBox<String> componentWidthComboBox, ComboBox<String> componentLengthComboBox, ComboBox<String> componentRollerPitchComboBox, ComboBox<String> componentPolyVeeSideComboBox, ComboBox<String> componentNoOfMDRComboBox, TextField textTitle, TextField textSpeed1, TextField textSpeed2, TextField textHeight, ComboBox<String> componentAngleComboBox, ComboBox<String> componentControlComboBox) {
+    ConfigurationView(double scaleFactor, Pane mainPane, Pane drawPane, Region componentRegion, ComboBox<String> componentTypeComboBox, ComboBox<String> componentWidthComboBox, ComboBox<String> componentLengthComboBox, ComboBox<String> componentSkewLengthComboBox, ComboBox<String> componentRollerPitchComboBox, ComboBox<String> componentPolyVeeSideComboBox, ComboBox<String> componentNoOfMDRComboBox, TextField textTitle, TextField textSpeed1, TextField textSpeed2, TextField textHeight, TextField textAuxHeight, ComboBox<String> componentAngleComboBox, ComboBox<String> componentControlComboBox) {
         ConfigurationView.mainPane = mainPane;
         ConfigurationView.drawPane = drawPane;
         ConfigurationView.componentTypeComboBox = componentTypeComboBox;
         ConfigurationView.componentWidthComboBox = componentWidthComboBox;
         ConfigurationView.componentLengthComboBox = componentLengthComboBox;
+        ConfigurationView.componentSkewLengthComboBox = componentSkewLengthComboBox;
         ConfigurationView.componentRegion = componentRegion;
         ConfigurationView.componentRollerPitchComboBox = componentRollerPitchComboBox;
         ConfigurationView.componentPolyVeeSideComboBox = componentPolyVeeSideComboBox;
@@ -37,6 +39,7 @@ public class ConfigurationView extends MainView {
         ConfigurationView.textSpeed1 = textSpeed1;
         ConfigurationView.textSpeed2 = textSpeed2;
         ConfigurationView.textHeight = textHeight;
+        ConfigurationView.textAuxHeight = textAuxHeight;
         ConfigurationView.scaleFactor = scaleFactor;
         changeRegion();
     }
@@ -54,6 +57,7 @@ public class ConfigurationView extends MainView {
             }
         });
         componentLengthComboBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> componentRegion.setPrefWidth((double) Integer.parseInt(componentLengthComboBox.getItems().get((Integer) t1)) * scaleFactor));
+        componentSkewLengthComboBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> componentRegion.setPrefWidth((double) Integer.parseInt(componentSkewLengthComboBox.getItems().get((Integer) t1)) * scaleFactor));
     }
 
     static void addComponent() {
@@ -70,7 +74,7 @@ public class ConfigurationView extends MainView {
 
             case 1:
                 //System.out.println("Gravity roller conveyor");
-                component = new Gravity_roller_conveyor();
+                component = new Gravity_roller_conveyor(scaleFactor, preScaleWidth, preScaleHeight, width, height, textAuxHeight.getText(), textHeight.getText(), componentRollerPitchComboBox.getSelectionModel().getSelectedItem(), textTitle.getText());
                 break;
 
             case 2:
@@ -94,7 +98,9 @@ public class ConfigurationView extends MainView {
 
             case 5:
                 //System.out.println("Skew roller conveyor");
-                component = new Skew_roller_conveyor();
+                width = (double) Integer.parseInt(componentSkewLengthComboBox.getSelectionModel().getSelectedItem()) * scaleFactor;
+                preScaleWidth = Integer.parseInt(componentSkewLengthComboBox.getSelectionModel().getSelectedItem());
+                component = new Skew_roller_conveyor(scaleFactor, preScaleWidth, preScaleHeight, width, height, textHeight.getText(), textSpeed1.getText(), componentRollerPitchComboBox.getSelectionModel().getSelectedItem(), textTitle.getText(), componentControlComboBox.getSelectionModel().getSelectedItem(), componentPolyVeeSideComboBox.getSelectionModel().getSelectedItem());
                 break;
 
             case 6:
@@ -153,11 +159,13 @@ public class ConfigurationView extends MainView {
         if (component instanceof Curve_roller_conveyor)
             currentName = ((Curve_roller_conveyor) component).getCurrentName();
         //if (component instanceof Diverter)
-        //if (component instanceof Gravity_roller_conveyor)
+        if (component instanceof Gravity_roller_conveyor)
+            currentName = ((Gravity_roller_conveyor) component).getCurrentName();
         //if (component instanceof Merge_conveyor)
         if (component instanceof Motorized_roller_conveyor)
             currentName = ((Motorized_roller_conveyor) component).getCurrentName();
-        //if (component instanceof Skew_roller_conveyor)
+        if (component instanceof Skew_roller_conveyor)
+            currentName = ((Skew_roller_conveyor) component).getCurrentName();
         if (component instanceof Transfer_module_90_degree)
             currentName = ((Transfer_module_90_degree) component).getCurrentName();
         String finalCurrentName = currentName;
@@ -165,7 +173,7 @@ public class ConfigurationView extends MainView {
         contextMenu.getItems().add(renameComponentMenuItem);
         MenuItem sideComponentMenuItem = new MenuItem("Change side");
         sideComponentMenuItem.setVisible(false);
-        if(component instanceof  Motorized_roller_conveyor){
+        if (component instanceof Motorized_roller_conveyor) {
             sideComponentMenuItem.setVisible(true);
             sideComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).changeSide());
         }
@@ -270,7 +278,17 @@ public class ConfigurationView extends MainView {
         dialog.setTitle("Rename component");
         dialog.setHeaderText(null);
         dialog.setGraphic(null);
-        dialog.setContentText("New name:");
+        dialog.setContentText("New title:");
+
+        // Limit the number of characters to 7
+        dialog.getEditor().setTextFormatter(new TextFormatter<>(new IntegerStringConverter(), null,
+                change -> {
+                    String newText = change.getControlNewText();
+                    if (newText.length() <= 7) {
+                        return change;
+                    }
+                    return null; // reject the change
+                }));
 
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(name -> {
@@ -278,11 +296,13 @@ public class ConfigurationView extends MainView {
             if (component instanceof Curve_roller_conveyor)
                 ((Curve_roller_conveyor) component).modifyTitle(result.get());
             //if (component instanceof Diverter)
-            //if (component instanceof Gravity_roller_conveyor)
+            if (component instanceof Gravity_roller_conveyor)
+                ((Gravity_roller_conveyor) component).modifyTitle(result.get());
             //if (component instanceof Merge_conveyor)
             if (component instanceof Motorized_roller_conveyor)
                 ((Motorized_roller_conveyor) component).modifyTitle(result.get());
-            //if (component instanceof Skew_roller_conveyor)
+            if (component instanceof Skew_roller_conveyor)
+                ((Skew_roller_conveyor) component).modifyTitle(result.get());
             if (component instanceof Transfer_module_90_degree)
                 ((Transfer_module_90_degree) component).modifyTitle(result.get());
         });

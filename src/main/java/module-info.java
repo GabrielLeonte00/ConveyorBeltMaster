@@ -12,6 +12,7 @@ module com.convofig.conveyorbeltmaster {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.desktop;
 
     opens com.convofig.conveyorbeltmaster to javafx.fxml;
     exports com.convofig.conveyorbeltmaster;

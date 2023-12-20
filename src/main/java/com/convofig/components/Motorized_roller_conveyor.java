@@ -162,7 +162,6 @@ public class Motorized_roller_conveyor extends Label {
         textP.setStyle("-fx-font: 10 arial;");
         textP.relocate(120 * scaleFactor, Height / 2 + 80 * scaleFactor);
         group.getChildren().add(textP);
-
         setGraphic(group);
     }
 

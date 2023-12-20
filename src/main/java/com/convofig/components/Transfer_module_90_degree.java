@@ -41,7 +41,7 @@ public class Transfer_module_90_degree extends Label {
         this.preScaleHeight = preScaleHeight;
         this.preScaleWidth = preScaleWidth;
         Component_name = "Motorized roller conveyor";
-        Type_code = "G5301A";
+        Type_code = "1TC05";
         excelData = new String[22];
         Arrays.fill(excelData, "");
         createComponent();
@@ -142,19 +142,19 @@ public class Transfer_module_90_degree extends Label {
         Text textH = new Text("H = " + H);
         textH.setFill(Color.LIGHTGREEN);
         textH.setStyle("-fx-font: 10 arial;");
-        textH.relocate(120 * scaleFactor, Height / 2 + 15 * scaleFactor);
+        textH.relocate(120 * scaleFactor, Height / 2 + 10 * scaleFactor);
         group.getChildren().add(textH);
 
         Text textV1 = new Text("V1 = " + V1);
         textV1.setFill(Color.BLUE);
         textV1.setStyle("-fx-font: 10 arial;");
-        textV1.relocate((120 + 150) * scaleFactor, Height / 2 + 15 * scaleFactor);
+        textV1.relocate((120 + 150) * scaleFactor, Height / 2 + 10 * scaleFactor);
         group.getChildren().add(textV1);
 
         Text textV2 = new Text("V2 = " + V2);
         textV2.setFill(Color.BLUE);
         textV2.setStyle("-fx-font: 10 arial;");
-        textV2.relocate((120 + 300) * scaleFactor, Height / 2 + 15 * scaleFactor);
+        textV2.relocate((120 + 300) * scaleFactor, Height / 2 + 10 * scaleFactor);
         group.getChildren().add(textV2);
 
         setGraphic(group);
