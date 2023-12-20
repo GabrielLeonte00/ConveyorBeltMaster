@@ -24,7 +24,7 @@ public class MainApplication extends Application {
         stage.show();
     }
 
-    protected Stage maximizeStage(){
+    protected void maximizeStage(){
         Screen primaryScreen = Screen.getPrimary();
         Rectangle2D visualBounds = primaryScreen.getVisualBounds();
 
@@ -32,6 +32,9 @@ public class MainApplication extends Application {
         stage.setY(visualBounds.getMinY());
         stage.setWidth(visualBounds.getWidth());
         stage.setHeight(visualBounds.getHeight());
+    }
+
+    public Stage getStage(){
         return stage;
     }
 

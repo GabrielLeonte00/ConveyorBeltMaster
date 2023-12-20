@@ -18,6 +18,18 @@ public class Diverter extends Label {
         createComponent();
     }
 
+    public String getDataForSave() {
+        return String.valueOf(rotation);
+    }
+
+    public double getWidthForLoad(){
+        return 120;
+    }
+
+    public double getHeightLoad(){
+        return 120;
+    }
+
     private void createComponent() {
         Rectangle rectangle = new Rectangle(120, 120);
         rectangle.fillProperty().set(null);
@@ -37,6 +49,7 @@ public class Diverter extends Label {
         // Add both the rectangle and the line to a Group
         setGraphic(new Group(rectangle, line, text));
     }
+
 
     public Diverter copyComponent() {
         Diverter copy = new Diverter();

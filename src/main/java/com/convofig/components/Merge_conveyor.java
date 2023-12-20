@@ -15,6 +15,17 @@ public class Merge_conveyor extends Label {
         createComponent();
     }
 
+    public double getWidthForLoad(){
+        return 120;
+    }
+
+    public double getHeightLoad(){
+        return 120;
+    }
+
+    public String getDataForSave() {
+        return String.valueOf(rotation);
+    }
     private void createComponent() {
         Rectangle rectangle = new Rectangle(120, 120);
         rectangle.fillProperty().set(null);

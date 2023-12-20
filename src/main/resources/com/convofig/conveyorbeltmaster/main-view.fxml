@@ -21,13 +21,13 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="385.0" prefWidth="486.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.convofig.controllers.MainView">
+<AnchorPane fx:id="backgroundApp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="385.0" prefWidth="486.0" stylesheets="@../../../gridBackground.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.convofig.controllers.MainView">
    <children>
       <Pane fx:id="mainPane" prefHeight="200.0" prefWidth="200.0" AnchorPane.topAnchor="25.0">
          <children>
             <Pane fx:id="drawPane" style="-fx-background-color: BLACK;">
                <children>
-                  <ImageView fx:id="mainImage" fitHeight="364.0" fitWidth="486.0" layoutY="-6.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="mainImage" fitHeight="364.0" fitWidth="486.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../images/main.png" />
                      </image>
@@ -36,6 +36,7 @@
             </Pane>
          </children>
       </Pane>
+      <Region fx:id="componentRegion" disable="true" opacity="0.5" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: WHITE; -fx-border-style: segments(5, 5, 5, 5);" visible="false" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="45.0" />
       <StackPane fx:id="configurationMenu" prefHeight="364.0" prefWidth="239.0" style="-fx-background-color: #804e16;" visible="false" AnchorPane.leftAnchor="3.0" AnchorPane.topAnchor="28.0">
          <opaqueInsets>
             <Insets />
@@ -60,24 +61,30 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
                               <Label style="-fx-text-fill: white;" text="Title" />
-                              <Label style="-fx-text-fill: white;" text="Width" GridPane.rowIndex="1" />
-                              <Label style="-fx-text-fill: white;" text="Length" GridPane.rowIndex="2" />
-                              <Label style="-fx-text-fill: white;" text="Roller pitch" GridPane.rowIndex="3" />
-                              <Label style="-fx-text-fill: white;" text="Poly vee side" GridPane.rowIndex="4" />
-                              <Label style="-fx-text-fill: white;" text="No. of MDR" GridPane.rowIndex="5" />
-                              <Label style="-fx-text-fill: white;" text="Speed" GridPane.rowIndex="6" />
-                              <Label style="-fx-text-fill: white;" text="Height" GridPane.rowIndex="7" />
-                              <TextField GridPane.columnIndex="1" />
+                              <Label style="-fx-text-fill: white;" text="Width (mm)" GridPane.rowIndex="1" />
+                              <Label fx:id="labelLength" style="-fx-text-fill: white;" text="Length (mm)" GridPane.rowIndex="2" />
+                              <Label fx:id="labelPitch" style="-fx-text-fill: white;" text="Roller pitch (mm)" GridPane.rowIndex="3" />
+                              <Label fx:id="labelPolySide" style="-fx-text-fill: white;" text="Poly vee side" GridPane.rowIndex="4" />
+                              <Label fx:id="labelNoMDR" style="-fx-text-fill: white;" text="No. of MDR" GridPane.rowIndex="5" />
+                              <Label fx:id="labelSpeed" style="-fx-text-fill: white;" text="Speed (m/min)" GridPane.rowIndex="6" />
+                              <Label style="-fx-text-fill: white;" text="Height (mm)" GridPane.rowIndex="7" />
+                              <TextField fx:id="textTitle" GridPane.columnIndex="1" />
                               <ComboBox fx:id="componentWidthComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <ComboBox fx:id="componentLengthComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <ComboBox fx:id="componentRollerPitchComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <ComboBox fx:id="componentPolyVeeSideComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <ComboBox fx:id="componentNoOfMDRComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <TextField fx:id="textHeight" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <TextField fx:id="textSpeed1" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <ComboBox fx:id="componentAngleComboBox" prefWidth="150.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label text="Control card type" textFill="WHITE" GridPane.rowIndex="8" />
+                              <ComboBox fx:id="componentControlComboBox" editable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <TextField fx:id="textLength90Transfer" editable="false" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <TextField fx:id="textSpeed2" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                            </children>
                         </GridPane>
                      </children>
@@ -87,16 +94,16 @@
             </VBox>
          </children>
       </StackPane>
-      <Region fx:id="componentRegion" disable="true" opacity="0.5" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: WHITE; -fx-border-style: segments(5, 5, 5, 5);" visible="false" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="46.0" />
       <MenuBar prefHeight="25.0" prefWidth="486.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#newMethod" text="New  " />
-                  <MenuItem mnemonicParsing="false" text="Load" />
+                  <MenuItem mnemonicParsing="false" onAction="#loadMethod" text="Load" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-              <MenuItem fx:id="SaveMI" disable="true" mnemonicParsing="false" text="Save" />
-                  <MenuItem fx:id="ExportMI" disable="true" mnemonicParsing="false" text="Export" />
+              <MenuItem fx:id="SaveMI" disable="true" mnemonicParsing="false" onAction="#saveMethod" text="Save" />
+                  <MenuItem fx:id="ExportDraftMI" disable="true" mnemonicParsing="false" text="Export draft" />
+                  <MenuItem fx:id="ExportExcelMI" disable="true" mnemonicParsing="false" text="Export excel" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#quitMethod" text="Quit" />
             </items>
@@ -105,12 +112,12 @@
               <items>
                   <MenuItem fx:id="increaseSizeMI" disable="true" mnemonicParsing="false" onAction="#increaseSizeMethod" text="Increase size" />
                   <RadioMenuItem fx:id="AlignRMI" mnemonicParsing="false" onAction="#alignMethod" text="Align" />
-                <MenuItem fx:id="ClearMI" disable="true" mnemonicParsing="false" text="Clear" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="View">
             <items>
                   <RadioMenuItem fx:id="ConfigurationRMI" disable="true" mnemonicParsing="false" onAction="#configurationMethod" text="Configuration" />
+                  <RadioMenuItem fx:id="OutlineRMI" disable="true" mnemonicParsing="false" onAction="#outlineMethod" text="Outline" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="zoomInMI" disable="true" mnemonicParsing="false" onAction="#zoomInMethod" text="Zoom in" />
                   <MenuItem fx:id="zoomOutMI" disable="true" mnemonicParsing="false" onAction="#zoomOutMethod" text="Zoom out" />
@@ -127,4 +134,7 @@
         </menus>
       </MenuBar>
    </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
 </AnchorPane>

@@ -1,0 +1,5 @@
+.root {
+    -fx-background-color: lightgray,
+        linear-gradient(from 0.5px 0.0px to 50.5px 0.0px, repeat, #c2c0bc 5%, transparent 4.5%),
+        linear-gradient(from 0.0px 0.5px to 0.0px 50.5px, repeat, #c2c0bc 5%, transparent 4.5%);
+}
