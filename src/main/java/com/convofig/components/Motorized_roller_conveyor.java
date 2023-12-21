@@ -26,6 +26,8 @@ public class Motorized_roller_conveyor extends Label {
     private final double scaleFactor;
     private Text titleText;
     private final String control;
+    private Rectangle bounds;
+    private Rectangle dragBounds;
     private Group group;
 
     public Motorized_roller_conveyor(double scaleFactor, int preScaleWidth, int preScaleHeight, double Width, double Height, String PolySide, String No_MDR, String H, String V, String P, String title, String control) {
@@ -51,7 +53,7 @@ public class Motorized_roller_conveyor extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + String.valueOf(scaleFactor) + "," + String.valueOf(preScaleWidth) + "," + String.valueOf(preScaleHeight) + "," + String.valueOf(Width) + "," + String.valueOf(Height) + "," + PolySide + "," + No_MDR + "," + H + "," + V + "," + P + "," + title + "," + control;
+        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + PolySide + "," + No_MDR + "," + H + "," + V + "," + P + "," + title + "," + control;
     }
 
     public double getWidthForLoad() {
@@ -60,6 +62,14 @@ public class Motorized_roller_conveyor extends Label {
 
     public double getHeightLoad() {
         return Height;
+    }
+
+    public void mouseEnteredDragZone() {
+        dragBounds.setVisible(true);
+    }
+
+    public void mouseExitedDragZone() {
+        dragBounds.setVisible(false);
     }
 
     void populateData() {
@@ -109,6 +119,11 @@ public class Motorized_roller_conveyor extends Label {
     private void createComponent() {
         group = new Group();
 
+        bounds = new Rectangle(Width, Height);
+        bounds.fillProperty().set(null);
+        bounds.setStroke(Color.TRANSPARENT);
+        group.getChildren().add(bounds);
+
         Rectangle rectangle = new Rectangle(Width, Height);
         rectangle.fillProperty().set(null);
         rectangle.setStroke(Color.WHITE);
@@ -141,6 +156,7 @@ public class Motorized_roller_conveyor extends Label {
 
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
+        titleText.setStyle("-fx-font: 16 arial;");
         titleText.setX(120 * scaleFactor); // Adjust the X position based on your requirement
         titleText.setY(Height / 2 - 30 * scaleFactor); // Adjust the Y position based on your requirement
         group.getChildren().add(titleText);
@@ -162,6 +178,13 @@ public class Motorized_roller_conveyor extends Label {
         textP.setStyle("-fx-font: 10 arial;");
         textP.relocate(120 * scaleFactor, Height / 2 + 80 * scaleFactor);
         group.getChildren().add(textP);
+
+        dragBounds = new Rectangle(Width / 2 - 100 * scaleFactor, Height / 2 - 100 * scaleFactor, 200 * scaleFactor, 200 * scaleFactor);
+        dragBounds.setFill(Color.rgb(127, 255, 212, 0.25));
+        dragBounds.setStroke(Color.rgb(127, 255, 212, 0.5));
+        dragBounds.setVisible(false);
+        group.getChildren().add(dragBounds);
+
         setGraphic(group);
     }
 
@@ -185,7 +208,9 @@ public class Motorized_roller_conveyor extends Label {
     }
 
     private void updateRotation() {
-        getGraphic().setRotate(rotation);
+        bounds.setRotate(rotation);
+        group.setRotate(rotation);
+        dragBounds.setRotate(-rotation);
     }
 
     public void drawRollers(Group group) {
@@ -217,8 +242,6 @@ public class Motorized_roller_conveyor extends Label {
 
                 break;
         }
-
-
     }
 
     public void drawRoller(Group group, double x, double y) {
@@ -255,7 +278,6 @@ public class Motorized_roller_conveyor extends Label {
         Polygon arrow = new Polygon(arrowPoints);
         arrow.setStroke(Color.YELLOW);
         arrow.setFill(Color.TRANSPARENT); // Set to transparent if you don't want to fill the arrow
-
         group.getChildren().add(arrow);
     }
 

@@ -23,6 +23,9 @@ public class Transfer_module_90_degree extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
+    private Rectangle bounds;
+    private Rectangle dragBounds;
+    private Group group;
     private final double scaleFactor;
     private Text titleText;
     private final String control;
@@ -40,7 +43,7 @@ public class Transfer_module_90_degree extends Label {
         this.control = control;
         this.preScaleHeight = preScaleHeight;
         this.preScaleWidth = preScaleWidth;
-        Component_name = "Motorized roller conveyor";
+        Component_name = "90 degree transfer module";
         Type_code = "1TC05";
         excelData = new String[22];
         Arrays.fill(excelData, "");
@@ -49,15 +52,23 @@ public class Transfer_module_90_degree extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + String.valueOf(scaleFactor) + "," + String.valueOf(preScaleWidth) + "," + String.valueOf(preScaleHeight) + "," + String.valueOf(Width) + "," + String.valueOf(Height) + "," + H + "," + V1 + "," + V2 + "," + P + "," + title + "," + control;
+        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + H + "," + V1 + "," + V2 + "," + P + "," + title + "," + control;
     }
 
-    public double getWidthForLoad(){
+    public double getWidthForLoad() {
         return Width;
     }
 
-    public double getHeightLoad(){
+    public double getHeightLoad() {
         return Height;
+    }
+
+    public void mouseEnteredDragZone() {
+        dragBounds.setVisible(true);
+    }
+
+    public void mouseExitedDragZone() {
+        dragBounds.setVisible(false);
     }
 
     void populateData() {
@@ -92,7 +103,12 @@ public class Transfer_module_90_degree extends Label {
 
     private void createComponent() {
 
-        Group group = new Group();
+        group = new Group();
+
+        bounds = new Rectangle(Width, Height);
+        bounds.fillProperty().set(null);
+        bounds.setStroke(Color.TRANSPARENT);
+        group.getChildren().add(bounds);
 
         Rectangle rectangle = new Rectangle(Width, Height);
         rectangle.fillProperty().set(null);
@@ -135,6 +151,7 @@ public class Transfer_module_90_degree extends Label {
 
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
+        titleText.setStyle("-fx-font: 16 arial;");
         titleText.setX(120 * scaleFactor); // Adjust the X position based on your requirement
         titleText.setY(Height / 2 - 15 * scaleFactor); // Adjust the Y position based on your requirement
         group.getChildren().add(titleText);
@@ -156,6 +173,12 @@ public class Transfer_module_90_degree extends Label {
         textV2.setStyle("-fx-font: 10 arial;");
         textV2.relocate((120 + 300) * scaleFactor, Height / 2 + 10 * scaleFactor);
         group.getChildren().add(textV2);
+
+        dragBounds = new Rectangle(Width / 2 - 100 * scaleFactor, Height / 2 - 100 * scaleFactor, 200 * scaleFactor, 200 * scaleFactor);
+        dragBounds.setFill(Color.rgb(127, 255, 212, 0.25));
+        dragBounds.setStroke(Color.rgb(127, 255, 212, 0.5));
+        dragBounds.setVisible(false);
+        group.getChildren().add(dragBounds);
 
         setGraphic(group);
     }
@@ -180,7 +203,9 @@ public class Transfer_module_90_degree extends Label {
     }
 
     private void updateRotation() {
-        getGraphic().setRotate(rotation);
+        bounds.setRotate(rotation);
+        group.setRotate(rotation);
+        dragBounds.setRotate(-rotation);
     }
 
     void drawBars(Group group, double middleY) {

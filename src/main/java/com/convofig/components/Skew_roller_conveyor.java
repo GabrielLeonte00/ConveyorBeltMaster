@@ -26,6 +26,9 @@ public class Skew_roller_conveyor extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
+    private Rectangle bounds;
+    private Rectangle dragBounds;
+    private Group group;
     private final double scaleFactor;
     private Text titleText;
     private final String control;
@@ -43,7 +46,7 @@ public class Skew_roller_conveyor extends Label {
         this.PolySide = PolySide;
         this.preScaleHeight = preScaleHeight;
         this.preScaleWidth = preScaleWidth;
-        Component_name = "Motorized roller conveyor";
+        Component_name = "Skew roller conveyor";
         Type_code = "G5304";
         excelData = new String[22];
         Arrays.fill(excelData, "");
@@ -101,6 +104,13 @@ public class Skew_roller_conveyor extends Label {
         return Height;
     }
 
+    public void mouseEnteredDragZone(){
+        dragBounds.setVisible(true);
+    }
+    public void mouseExitedDragZone(){
+        dragBounds.setVisible(false);
+    }
+
     void populateData() {
         excelData[0] = title;
         excelData[1] = Type_code;
@@ -135,7 +145,12 @@ public class Skew_roller_conveyor extends Label {
     }
 
     private void createComponent() {
-        Group group = new Group();
+        group = new Group();
+
+        bounds = new Rectangle(Width, Height);
+        bounds.fillProperty().set(null);
+        bounds.setStroke(Color.TRANSPARENT);
+        group.getChildren().add(bounds);
 
         Rectangle rectangle = new Rectangle(Width, Height);
         rectangle.fillProperty().set(null);
@@ -168,6 +183,7 @@ public class Skew_roller_conveyor extends Label {
 
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
+        titleText.setStyle("-fx-font: 16 arial;");
         titleText.setX(240 * scaleFactor); // Adjust the X position based on your requirement
         titleText.setY(Height / 2 - 30 * scaleFactor); // Adjust the Y position based on your requirement
         group.getChildren().add(titleText);
@@ -189,6 +205,13 @@ public class Skew_roller_conveyor extends Label {
         textP.setStyle("-fx-font: 10 arial;");
         textP.relocate(240 * scaleFactor, Height / 2 + 80 * scaleFactor);
         group.getChildren().add(textP);
+
+        dragBounds = new Rectangle(Width / 2 - 100 * scaleFactor, Height / 2 - 100 * scaleFactor, 200 * scaleFactor, 200 * scaleFactor);
+        dragBounds.setFill(Color.rgb(127, 255, 212, 0.25));
+        dragBounds.setStroke(Color.rgb(127, 255, 212, 0.5));
+        dragBounds.setVisible(false);
+        group.getChildren().add(dragBounds);
+
         setGraphic(group);
     }
 
@@ -212,7 +235,9 @@ public class Skew_roller_conveyor extends Label {
     }
 
     private void updateRotation() {
-        getGraphic().setRotate(rotation);
+        bounds.setRotate(rotation);
+        group.setRotate(rotation);
+        dragBounds.setRotate(-rotation);
     }
 
     private void drawArrow(Group group, double y) {

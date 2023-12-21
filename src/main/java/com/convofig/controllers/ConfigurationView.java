@@ -48,8 +48,29 @@ public class ConfigurationView extends MainView {
         componentWidthComboBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
             componentRegion.setPrefHeight((double) (Integer.parseInt(componentWidthComboBox.getItems().get((Integer) t1)) + 70) * scaleFactor);
             if (componentTypeComboBox.getSelectionModel().getSelectedIndex() == 2) {
-                componentRegion.setPrefHeight((double) (Integer.parseInt(componentWidthComboBox.getItems().get((Integer) t1)) + 70) * scaleFactor);
                 componentRegion.setPrefWidth(780 * scaleFactor);
+            }
+            if (componentTypeComboBox.getSelectionModel().getSelectedIndex() == 3) {
+                switch (componentWidthComboBox.getSelectionModel().getSelectedIndex()) {
+                    case 0:
+                        componentRegion.setPrefWidth(988 * scaleFactor);
+                        break;
+                    case 1:
+                        componentRegion.setPrefWidth(1169 * scaleFactor);
+                        break;
+                    case 2:
+                        componentRegion.setPrefWidth(1349 * scaleFactor);
+                        break;
+                    case 3:
+                        componentRegion.setPrefWidth(1529 * scaleFactor);
+                        break;
+                    case 4:
+                        componentRegion.setPrefWidth(1709 * scaleFactor);
+                        break;
+                    case 5:
+                        componentRegion.setPrefWidth(1889 * scaleFactor);
+                        break;
+                }
             }
             if (componentTypeComboBox.getSelectionModel().getSelectedIndex() == 4) {
                 componentRegion.setPrefHeight((double) (Integer.parseInt(componentWidthComboBox.getItems().get((Integer) t1)) + 70 + 790) * scaleFactor);
@@ -86,7 +107,8 @@ public class ConfigurationView extends MainView {
 
             case 3:
                 //System.out.println("Merge conveyor");
-                component = new Merge_conveyor();
+
+                component = new Merge_conveyor(scaleFactor, preScaleHeight, height, componentPolyVeeSideComboBox.getSelectionModel().getSelectedItem(), textHeight.getText(), textSpeed1.getText(), componentRollerPitchComboBox.getSelectionModel().getSelectedItem(), textTitle.getText(), componentControlComboBox.getSelectionModel().getSelectedItem());
                 break;
 
             case 4:
@@ -141,8 +163,6 @@ public class ConfigurationView extends MainView {
 
     static void addActionsToComponent(Node component, double width, double height) {
         double ALIGNMENT_THRESHOLD = 20;
-        String currentName = null;
-
         // Rotation context menu
         ContextMenu contextMenu = new ContextMenu();
         MenuItem rotateMenuItem = new MenuItem("Rotate");
@@ -156,20 +176,25 @@ public class ConfigurationView extends MainView {
         copyComponentMenuItem.setOnAction(event -> copyComponent(component, width, height));
         contextMenu.getItems().add(copyComponentMenuItem);
         MenuItem renameComponentMenuItem = new MenuItem("Rename");
-        if (component instanceof Curve_roller_conveyor)
-            currentName = ((Curve_roller_conveyor) component).getCurrentName();
-        //if (component instanceof Diverter)
-        if (component instanceof Gravity_roller_conveyor)
-            currentName = ((Gravity_roller_conveyor) component).getCurrentName();
-        //if (component instanceof Merge_conveyor)
-        if (component instanceof Motorized_roller_conveyor)
-            currentName = ((Motorized_roller_conveyor) component).getCurrentName();
-        if (component instanceof Skew_roller_conveyor)
-            currentName = ((Skew_roller_conveyor) component).getCurrentName();
-        if (component instanceof Transfer_module_90_degree)
-            currentName = ((Transfer_module_90_degree) component).getCurrentName();
-        String finalCurrentName = currentName;
-        renameComponentMenuItem.setOnAction(event -> renameComponent(component, finalCurrentName));
+        
+        renameComponentMenuItem.setOnAction(event -> {
+            String currentName = null;
+            if (component instanceof Curve_roller_conveyor)
+                currentName = ((Curve_roller_conveyor) component).getCurrentName();
+            //if (component instanceof Diverter)
+            if (component instanceof Gravity_roller_conveyor)
+                currentName = ((Gravity_roller_conveyor) component).getCurrentName();
+            if (component instanceof Merge_conveyor)
+                currentName = ((Merge_conveyor) component).getCurrentName();
+            if (component instanceof Motorized_roller_conveyor)
+                currentName = ((Motorized_roller_conveyor) component).getCurrentName();
+            if (component instanceof Skew_roller_conveyor)
+                currentName = ((Skew_roller_conveyor) component).getCurrentName();
+            if (component instanceof Transfer_module_90_degree)
+                currentName = ((Transfer_module_90_degree) component).getCurrentName();
+            String finalCurrentName = currentName;
+            renameComponent(component, finalCurrentName);
+        });
         contextMenu.getItems().add(renameComponentMenuItem);
         MenuItem sideComponentMenuItem = new MenuItem("Change side");
         sideComponentMenuItem.setVisible(false);
@@ -182,21 +207,20 @@ public class ConfigurationView extends MainView {
         removeComponentMenuItem.setOnAction(event -> removeComponent(component));
         contextMenu.getItems().add(removeComponentMenuItem);
 
-        component.setOnMouseEntered(e -> component.setStyle("-fx-border-color: blue ;\n" +
-                "    -fx-border-width: 2 ; \n" +
-                "    -fx-border-style: segments(2, 3, 3, 3)  line-cap round ; "));
-        component.setOnMouseExited(e -> component.setStyle("-fx-border-style: none;"));
+        component.hoverProperty().addListener(e -> dragBoundsVisibleTrue(component));
+
+        component.setOnMouseExited(e -> {
+            dragBoundsVisibleFalse(component);
+        });
 
         component.setOnMousePressed(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
-
                 double scale = drawPane.getLocalToSceneTransform().getMxx();
                 off_setInitialX = (e.getSceneX() / scale) - component.getLayoutX();
                 off_setInitialY = (e.getSceneY() / scale) - component.getLayoutY();
-                if (component instanceof Curve_roller_conveyor) {
-                    if (e.getX() > 0 && e.getX() <= height + 790 * scaleFactor && e.getY() > 0 && e.getY() <= height + 790 * scaleFactor)
-                        zone_confirm = true;
-                } else if (e.getX() > 0 && e.getX() <= width && e.getY() > 0 && e.getY() <= height)
+                double middlePointX = component.getBoundsInLocal().getCenterX();
+                double middlePointY = component.getBoundsInLocal().getCenterY();
+                if (e.getX() > middlePointX - 100 * scaleFactor && e.getY() > middlePointY - 100 * scaleFactor && e.getX() < middlePointX + 100 * scaleFactor && e.getY() < middlePointY + 100 * scaleFactor)
                     zone_confirm = true;
             }
             if (e.getButton() == MouseButton.SECONDARY) {
@@ -204,11 +228,15 @@ public class ConfigurationView extends MainView {
             }
         });
 
-        component.setOnMouseReleased(e -> zone_confirm = false);
+        component.setOnMouseReleased(e -> {
+            zone_confirm = false;
+            dragBoundsVisibleTrue(component);
+        });
 
         component.setOnMouseDragged(e -> {
             if (e.getButton() == MouseButton.PRIMARY && zone_confirm) {
-                component.setStyle("-fx-border-style: none;");
+                dragBoundsVisibleFalse(component);
+
                 double scale = drawPane.getLocalToSceneTransform().getMxx();
 
                 double x = e.getSceneX() / scale - off_setInitialX;
@@ -273,6 +301,9 @@ public class ConfigurationView extends MainView {
     }
 
     private static void renameComponent(Node component, String currentName) {
+
+        System.out.println(currentName);
+
         TextInputDialog dialog = new TextInputDialog(currentName);
         dialog.initStyle(StageStyle.UTILITY);
         dialog.setTitle("Rename component");
@@ -280,25 +311,21 @@ public class ConfigurationView extends MainView {
         dialog.setGraphic(null);
         dialog.setContentText("New title:");
 
-        // Limit the number of characters to 7
-        dialog.getEditor().setTextFormatter(new TextFormatter<>(new IntegerStringConverter(), null,
-                change -> {
-                    String newText = change.getControlNewText();
-                    if (newText.length() <= 7) {
-                        return change;
-                    }
-                    return null; // reject the change
-                }));
+        dialog.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 7) {
+                dialog.getEditor().setText(oldValue);
+            }
+        });
 
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(name -> {
-            // Assuming Node class has a 'setName' method
             if (component instanceof Curve_roller_conveyor)
                 ((Curve_roller_conveyor) component).modifyTitle(result.get());
             //if (component instanceof Diverter)
             if (component instanceof Gravity_roller_conveyor)
                 ((Gravity_roller_conveyor) component).modifyTitle(result.get());
-            //if (component instanceof Merge_conveyor)
+            if (component instanceof Merge_conveyor)
+                ((Merge_conveyor) component).modifyTitle(result.get());
             if (component instanceof Motorized_roller_conveyor)
                 ((Motorized_roller_conveyor) component).modifyTitle(result.get());
             if (component instanceof Skew_roller_conveyor)
@@ -306,6 +333,40 @@ public class ConfigurationView extends MainView {
             if (component instanceof Transfer_module_90_degree)
                 ((Transfer_module_90_degree) component).modifyTitle(result.get());
         });
+    }
+
+    private static void dragBoundsVisibleTrue(Node component) {
+        if (component instanceof Motorized_roller_conveyor)
+            ((Motorized_roller_conveyor) component).mouseEnteredDragZone();
+        if (component instanceof Curve_roller_conveyor)
+            ((Curve_roller_conveyor) component).mouseEnteredDragZone();
+        if (component instanceof Diverter)
+            ((Diverter) component).mouseEnteredDragZone();
+        if (component instanceof Gravity_roller_conveyor)
+            ((Gravity_roller_conveyor) component).mouseEnteredDragZone();
+        if (component instanceof Merge_conveyor)
+            ((Merge_conveyor) component).mouseEnteredDragZone();
+        if (component instanceof Skew_roller_conveyor)
+            ((Skew_roller_conveyor) component).mouseEnteredDragZone();
+        if (component instanceof Transfer_module_90_degree)
+            ((Transfer_module_90_degree) component).mouseEnteredDragZone();
+    }
+
+    private static void dragBoundsVisibleFalse(Node component) {
+        if (component instanceof Motorized_roller_conveyor)
+            ((Motorized_roller_conveyor) component).mouseExitedDragZone();
+        if (component instanceof Curve_roller_conveyor)
+            ((Curve_roller_conveyor) component).mouseExitedDragZone();
+        if (component instanceof Diverter)
+            ((Diverter) component).mouseExitedDragZone();
+        if (component instanceof Gravity_roller_conveyor)
+            ((Gravity_roller_conveyor) component).mouseExitedDragZone();
+        if (component instanceof Merge_conveyor)
+            ((Merge_conveyor) component).mouseExitedDragZone();
+        if (component instanceof Skew_roller_conveyor)
+            ((Skew_roller_conveyor) component).mouseExitedDragZone();
+        if (component instanceof Transfer_module_90_degree)
+            ((Transfer_module_90_degree) component).mouseExitedDragZone();
     }
 
     private static void removeComponent(Node component) {

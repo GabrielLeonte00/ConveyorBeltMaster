@@ -4,16 +4,18 @@ import com.convofig.components.*;
 import com.convofig.conveyorbeltmaster.MainApplication;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
@@ -21,7 +23,6 @@ import javafx.util.StringConverter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.*;
 import java.util.Objects;
 import java.util.Optional;
@@ -417,7 +418,7 @@ public class MainView extends MainApplication {
 
         // Create a FileChooser
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save File");
+        fileChooser.setTitle("Save draft");
         fileChooser.setInitialDirectory(initialDirectory);
 
         // Set the extension filter (optional)
@@ -482,7 +483,7 @@ public class MainView extends MainApplication {
 
         // Create a FileChooser
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Text File");
+        fileChooser.setTitle("Load draft");
         fileChooser.setInitialDirectory(initialDirectory);
 
         // Set the extension filter to allow only text files (*.txt)
@@ -585,7 +586,7 @@ public class MainView extends MainApplication {
             drawPane.getChildren().add(newComponent);
         }
         if (Objects.equals(data[0], "Merge_conveyor")) {
-            Merge_conveyor newComponent = new Merge_conveyor();
+            Merge_conveyor newComponent = new Merge_conveyor(Double.parseDouble(data[4]), Integer.parseInt(data[5]), Integer.parseInt(data[6]), data[7], data[8], data[9], data[10], data[11], data[12]);
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
@@ -622,28 +623,87 @@ public class MainView extends MainApplication {
 
     @FXML
     void exportMethod() {
-        if (!drawPane.getChildren().isEmpty()) {
-            double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-            getExportLimits(x1, y1, x2, y2);
-
+        if (drawPane.getChildren().isEmpty()) {
+            System.out.println("EMPTY");
+        } else {
+            double[] bounds = getExportLimits();
+            Rectangle2D exportBounds = new Rectangle2D(bounds[0], bounds[1], bounds[2], bounds[3]);
+            exportImage(exportBounds);
         }
     }
 
-    void getExportLimits(double x1, double y1, double x2, double y2) {
+    double[] getExportLimits() {
         Node component = drawPane.getChildren().get(0);
-        x1 = component.getLayoutX();
-        y1 = component.getLayoutY();
-        x2 = component.getLayoutX() + component.getBoundsInLocal().getWidth();
-        y2 = component.getLayoutY() + component.getBoundsInLocal().getHeight();
+        double x1 = component.getLayoutX();
+        double y1 = component.getLayoutY();
+        double x2 = x1 + component.getBoundsInLocal().getWidth();
+        double y2 = y1 + component.getBoundsInLocal().getHeight();
+
         if (drawPane.getChildren().size() > 1)
-            for (int i = 1; i < drawPane.getChildren().size(); i++)
+            for (int i = 1; i < drawPane.getChildren().size(); i++) {
                 component = drawPane.getChildren().get(i);
-        if (component.getLayoutX() < x1) x1 = component.getLayoutX();
-        if (component.getLayoutY() < y1) y1 = component.getLayoutY();
-        if (component.getLayoutX() + component.getBoundsInLocal().getWidth() > x2)
-            x2 = component.getLayoutX() + component.getBoundsInLocal().getWidth();
-        if (component.getLayoutY() + component.getBoundsInLocal().getHeight() > y2)
-            y2 = component.getLayoutY() + component.getBoundsInLocal().getHeight();
+                if (component.getLayoutX() < x1) x1 = component.getLayoutX();
+                if (component.getLayoutY() < y1) y1 = component.getLayoutY();
+                if (component.getLayoutX() + component.getBoundsInLocal().getWidth() > x2)
+                    x2 = component.getLayoutX() + component.getBoundsInLocal().getWidth();
+                if (component.getLayoutY() + component.getBoundsInLocal().getHeight() > y2)
+                    y2 = component.getLayoutY() + component.getBoundsInLocal().getHeight();
+            }
+        double exportWidth = x2 - x1 + 50;
+        double exportHeight = y2 - y1 + 50;
+        x1 = x1 + drawPane.getLayoutX() - 25;
+        y1 = y1 + drawPane.getLayoutY() - 25;
+        return new double[]{x1, y1, exportWidth, exportHeight};
+    }
+
+    private void exportImage(Rectangle2D bounds) {
+        // Create a writable image
+        WritableImage writableImage = new WritableImage((int) bounds.getWidth(), (int) bounds.getHeight());
+        SnapshotParameters snapshotParameters = new SnapshotParameters();
+
+        // Set the fill and transform of the snapshot parameters to capture the specified bounds
+        snapshotParameters.setFill(Color.TRANSPARENT);
+        snapshotParameters.setViewport(bounds);
+
+        // Capture the snapshot of the specified bounds in the pane
+        drawPane.snapshot(snapshotParameters, writableImage);
+
+        // Set the initial directory inside the src folder
+        String initialPath = "src/main/resources/export";
+        File initialDirectory = new File(initialPath);
+
+        // Choose a file to save the image
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save draft");
+        fileChooser.setInitialDirectory(initialDirectory);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG Files", "*.png"));
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try {
+                // Get the pixel data from the writable image
+                PixelReader pixelReader = writableImage.getPixelReader();
+                int width = (int) writableImage.getWidth();
+                int height = (int) writableImage.getHeight();
+
+                // Create a BufferedImage and copy pixel data
+                BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                for (int x = 0; x < width; x++) {
+                    for (int y = 0; y < height; y++) {
+                        javafx.scene.paint.Color color = pixelReader.getColor(x, y);
+                        int argb = (int) (color.getOpacity() * 255) << 24 |
+                                (int) (color.getRed() * 255) << 16 |
+                                (int) (color.getGreen() * 255) << 8 |
+                                (int) (color.getBlue() * 255);
+                        bufferedImage.setRGB(x, y, argb);
+                    }
+                }
+
+                // Save the BufferedImage to the chosen file
+                ImageIO.write(bufferedImage, "png", file);
+            } catch (IOException ignored) {
+            }
+        }
     }
 
     void changeAbleConfigurations() {
@@ -655,6 +715,8 @@ public class MainView extends MainApplication {
                     componentLengthComboBox.setVisible(true);
                     componentSkewLengthComboBox.setVisible(false);
                     labelLength.setText("Length (mm)");
+                    labelLength.setVisible(true);
+                    componentLengthComboBox.setVisible(true);
                     textLength90Transfer.setVisible(false);
                     componentAngleComboBox.setVisible(false);
                     componentRollerPitchComboBox.setVisible(true);
@@ -680,6 +742,8 @@ public class MainView extends MainApplication {
                     componentLengthComboBox.setVisible(true);
                     componentSkewLengthComboBox.setVisible(false);
                     labelLength.setText("Length (mm)");
+                    labelLength.setVisible(true);
+                    componentLengthComboBox.setVisible(true);
                     textLength90Transfer.setVisible(false);
                     componentAngleComboBox.setVisible(false);
                     componentRollerPitchComboBox.setVisible(true);
@@ -705,6 +769,8 @@ public class MainView extends MainApplication {
                     componentLengthComboBox.setVisible(false);
                     componentSkewLengthComboBox.setVisible(false);
                     labelLength.setText("Length (mm)");
+                    labelLength.setVisible(true);
+                    componentLengthComboBox.setVisible(true);
                     textLength90Transfer.setVisible(true);
                     componentAngleComboBox.setVisible(false);
                     componentRollerPitchComboBox.setVisible(false);
@@ -727,6 +793,47 @@ public class MainView extends MainApplication {
 
                 case 3:
                     //System.out.println("Merge conveyor");
+                    componentLengthComboBox.setVisible(true);
+                    componentSkewLengthComboBox.setVisible(false);
+                    labelLength.setText("Length (mm)");
+                    labelLength.setVisible(false);
+                    componentLengthComboBox.setVisible(false);
+                    textLength90Transfer.setVisible(false);
+                    componentAngleComboBox.setVisible(false);
+                    componentRollerPitchComboBox.setVisible(true);
+                    labelPitch.setVisible(true);
+                    componentPolyVeeSideComboBox.setVisible(true);
+                    labelPolySide.setVisible(true);
+                    componentNoOfMDRComboBox.setVisible(false);
+                    labelNoMDR.setVisible(false);
+                    textSpeed2.setVisible(false);
+                    labelSpeed.setText("Speed (m/min)");
+                    labelHeight.setText("Height (mm)");
+                    textAuxHeight.setVisible(false);
+                    textSpeed1.setVisible(true);
+                    labelControl.setDisable(false);
+                    componentControlComboBox.setDisable(false);
+                    switch (componentWidthComboBox.getSelectionModel().getSelectedIndex()) {
+                        case 0:
+                            componentRegion.setPrefWidth(988 * scaleFactor);
+                            break;
+                        case 1:
+                            componentRegion.setPrefWidth(1169 * scaleFactor);
+                            break;
+                        case 2:
+                            componentRegion.setPrefWidth(1349 * scaleFactor);
+                            break;
+                        case 3:
+                            componentRegion.setPrefWidth(1529 * scaleFactor);
+                            break;
+                        case 4:
+                            componentRegion.setPrefWidth(1709 * scaleFactor);
+                            break;
+                        case 5:
+                            componentRegion.setPrefWidth(1889 * scaleFactor);
+                            break;
+                    }
+                    componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
 
                 case 4:
@@ -734,6 +841,7 @@ public class MainView extends MainApplication {
                     componentLengthComboBox.setVisible(false);
                     componentSkewLengthComboBox.setVisible(false);
                     labelLength.setText("Angle");
+                    labelLength.setVisible(true);
                     textLength90Transfer.setVisible(false);
                     componentAngleComboBox.setVisible(true);
                     componentRollerPitchComboBox.setVisible(false);
@@ -758,6 +866,7 @@ public class MainView extends MainApplication {
                     componentLengthComboBox.setVisible(false);
                     componentSkewLengthComboBox.setVisible(true);
                     labelLength.setText("Length (mm)");
+                    labelLength.setVisible(true);
                     textLength90Transfer.setVisible(false);
                     componentAngleComboBox.setVisible(false);
                     componentRollerPitchComboBox.setVisible(true);

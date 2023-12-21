@@ -22,6 +22,9 @@ public class Curve_roller_conveyor extends Label {
     private final String angle;
     private final String[] excelData;
     private int rotation = 0;
+    private Rectangle bounds;
+    private Rectangle dragBounds;
+    private Group group;
     private final double scaleFactor;
     private Text titleText;
     private final String control;
@@ -65,13 +68,20 @@ public class Curve_roller_conveyor extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + String.valueOf(scaleFactor) + "," + String.valueOf(preWidth) + "," + String.valueOf(Width) + "," + H + "," + V + "," + title + "," + angle + "," + control;
+        return rotation + "," + scaleFactor + "," + preWidth + "," + Width + "," + H + "," + V + "," + title + "," + angle + "," + control;
     }
 
-    public double getWidthForLoad(){
+    public double getWidthForLoad() {
         return Width;
     }
 
+    public void mouseEnteredDragZone() {
+        dragBounds.setVisible(true);
+    }
+
+    public void mouseExitedDragZone() {
+        dragBounds.setVisible(false);
+    }
 
     public String[] getDataForExcel() {
         return excelData;
@@ -88,8 +98,13 @@ public class Curve_roller_conveyor extends Label {
 
     private void createComponent() {
 
-        Group group = new Group();
+        group = new Group();
         double doubleAngle = Double.parseDouble(angle);
+
+        bounds = new Rectangle(Width, Width);
+        bounds.fillProperty().set(null);
+        bounds.setStroke(Color.TRANSPARENT);
+        group.getChildren().add(bounds);
 
         Rectangle rectangle = new Rectangle(Width, Width);
         rectangle.fillProperty().set(null);
@@ -167,6 +182,7 @@ public class Curve_roller_conveyor extends Label {
         double textPosition = (Width - 790 * scaleFactor) / 2 + 30 * scaleFactor;
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
+        titleText.setStyle("-fx-font: 16 arial;");
         titleText.setX(textPosition); // Adjust the X position based on your requirement
         titleText.setY(Width - 25 * scaleFactor); // Adjust the Y position based on your requirement
         group.getChildren().add(titleText);
@@ -188,6 +204,12 @@ public class Curve_roller_conveyor extends Label {
         textP.setStyle("-fx-font: 10 arial;");
         textP.relocate(textPosition, Width - 25 * scaleFactor - (45 + 35) * scaleFactor);
         group.getChildren().add(textP);
+
+        dragBounds = new Rectangle(Width / 2 - 100 * scaleFactor, Width / 2 - 100 * scaleFactor, 200 * scaleFactor, 200 * scaleFactor);
+        dragBounds.setFill(Color.rgb(127, 255, 212, 0.25));
+        dragBounds.setStroke(Color.rgb(127, 255, 212, 0.5));
+        dragBounds.setVisible(false);
+        group.getChildren().add(dragBounds);
 
         setGraphic(group);
     }
@@ -212,7 +234,9 @@ public class Curve_roller_conveyor extends Label {
     }
 
     private void updateRotation() {
-        getGraphic().setRotate(rotation);
+        bounds.setRotate(rotation);
+        group.setRotate(rotation);
+        dragBounds.setRotate(-rotation);
     }
 
 }
