@@ -129,11 +129,11 @@ public class Motorized_roller_conveyor extends Label {
         rectangle.setStroke(Color.WHITE);
         group.getChildren().add(rectangle);
 
-        Line topLine = new Line(0, 70 * scaleFactor, Width, 70 * scaleFactor);
+        Line topLine = new Line(0, 35 * scaleFactor, Width, 35 * scaleFactor);
         topLine.setStroke(Color.WHITE);
         group.getChildren().add(topLine);
 
-        Line botLine = new Line(0, Height - 70 * scaleFactor, Width, Height - 70 * scaleFactor);
+        Line botLine = new Line(0, Height - 35 * scaleFactor, Width, Height - 35 * scaleFactor);
         botLine.setStroke(Color.WHITE);
         group.getChildren().add(botLine);
 
@@ -145,10 +145,10 @@ public class Motorized_roller_conveyor extends Label {
 
         double xPositionCircles = 100 * scaleFactor;
         double circleDistance = 20;
-        drawSmallCircles(group, xPositionCircles / 2, 35 * scaleFactor, circleDistance);
-        drawSmallCircles(group, Width - xPositionCircles / 2, 35 * scaleFactor, circleDistance);
-        drawSmallCircles(group, xPositionCircles / 2, Height - 35 * scaleFactor, circleDistance);
-        drawSmallCircles(group, Width - xPositionCircles / 2, Height - 35 * scaleFactor, circleDistance);
+        drawSmallCircles(group, xPositionCircles / 2, (double) 35 /2 * scaleFactor, circleDistance);
+        drawSmallCircles(group, Width - xPositionCircles / 2, (double) 35 /2 * scaleFactor, circleDistance);
+        drawSmallCircles(group, xPositionCircles / 2, Height - (double) 35 /2 * scaleFactor, circleDistance);
+        drawSmallCircles(group, Width - xPositionCircles / 2, Height - (double) 35 /2 * scaleFactor, circleDistance);
 
         Line middleLine = new Line(0, Height / 2, Width, Height / 2);
         middleLine.setStroke(Color.RED);
@@ -217,9 +217,9 @@ public class Motorized_roller_conveyor extends Label {
         int NO_rollers = Integer.parseInt(No_MDR);
         double yPosition = 0;
         if (Objects.equals(PolySide, "Left")) {
-            yPosition = 70 * scaleFactor + 15 * scaleFactor;
+            yPosition = 35 * scaleFactor + 15 * scaleFactor;
         } else {
-            yPosition = Height - 70 * scaleFactor - 15 * scaleFactor;
+            yPosition = Height - 35 * scaleFactor - 15 * scaleFactor;
         }
         switch (NO_rollers) {
             case 1:
@@ -294,18 +294,18 @@ public class Motorized_roller_conveyor extends Label {
 
     private void drawBars(Group group, double middleX) {
         if (Objects.equals(PolySide, "Left")) {
-            group.getChildren().add(drawRectangle(middleX - 15, 70, widthX(middleX, middleX - 15), 10)); //y = 70+10
-            group.getChildren().add(drawRectangle(middleX - 25, 80, widthX(middleX, middleX - 25), 50)); //y = 80+50
-            drawZigZag(group, middleX - 25, 80, middleX - 25 + widthX(middleX, middleX - 25), 130);
-            group.getChildren().add(drawRectangle(middleX - 30, 130, widthX(middleX, middleX - 30), preScaleHeight - 150));
-            double nextY = 130 + preScaleHeight - 150;
+            group.getChildren().add(drawRectangle(middleX - 15, 35, widthX(middleX, middleX - 15), 10)); //y = 35+10
+            group.getChildren().add(drawRectangle(middleX - 25, 45, widthX(middleX, middleX - 25), 50)); //y = 45+50
+            drawZigZag(group, middleX - 25, 45, middleX - 25 + widthX(middleX, middleX - 25), 95);
+            group.getChildren().add(drawRectangle(middleX - 30, 95, widthX(middleX, middleX - 30), preScaleHeight - 80));
+            double nextY = 95 + preScaleHeight - 80;
             group.getChildren().add((drawRectangle(middleX - 25, nextY, widthX(middleX, middleX - 25), 10)));
             group.getChildren().add(drawRectangle(middleX - 20, nextY + 10, widthX(middleX, middleX - 20), 10)); //y = 70 + 10
         } else {
-            group.getChildren().add(drawRectangle(middleX - 20, 70, widthX(middleX, middleX - 20), 10)); //y = 70 + 10
-            group.getChildren().add((drawRectangle(middleX - 25, 80, widthX(middleX, middleX - 25), 10))); //y = 80 + 10
-            group.getChildren().add(drawRectangle(middleX - 30, 90, widthX(middleX, middleX - 30), preScaleHeight - 150));
-            double nextY = 90 + preScaleHeight - 150;
+            group.getChildren().add(drawRectangle(middleX - 20, 35, widthX(middleX, middleX - 20), 10)); //y = 35 + 10
+            group.getChildren().add((drawRectangle(middleX - 25, 45, widthX(middleX, middleX - 25), 10))); //y = 45 + 10
+            group.getChildren().add(drawRectangle(middleX - 30, 55, widthX(middleX, middleX - 30), preScaleHeight - 80));
+            double nextY = 55 + preScaleHeight - 80;
             group.getChildren().add(drawRectangle(middleX - 25, nextY, widthX(middleX, middleX - 25), 50));
             drawZigZag(group, middleX - 25, nextY, middleX - 25 + widthX(middleX, middleX - 25), nextY + 50);
             group.getChildren().add(drawRectangle(middleX - 15, nextY + 50, widthX(middleX, middleX - 15), 10));

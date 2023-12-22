@@ -115,13 +115,13 @@ public class Transfer_module_90_degree extends Label {
         rectangle.setStroke(Color.WHITE);
         group.getChildren().add(rectangle);
 
-        Line topLine = new Line(0, 70 * scaleFactor, Width, 70 * scaleFactor);
+        Line topLine = new Line(0, 35 * scaleFactor, Width, 35 * scaleFactor);
         topLine.setStroke(Color.WHITE);
         group.getChildren().add(topLine);
 
-        drawBars(group, (70 + 50) * scaleFactor);
+        drawBars(group, (35 + 50) * scaleFactor);
 
-        Rectangle topRectangle = new Rectangle(45 * scaleFactor, (70 + 90) * scaleFactor, Width - 105 * scaleFactor, 20 * scaleFactor);
+        Rectangle topRectangle = new Rectangle(45 * scaleFactor, (35 + 90) * scaleFactor, Width - 105 * scaleFactor, 20 * scaleFactor);
         topRectangle.fillProperty().set(null);
         topRectangle.setStroke(Color.WHITE);
         group.getChildren().add(topRectangle);
@@ -130,22 +130,22 @@ public class Transfer_module_90_degree extends Label {
         middleLine.setStroke(Color.RED);
         group.getChildren().add(middleLine);
 
-        Rectangle botRectangle = new Rectangle(45 * scaleFactor, Height - (70 + 90 + 20) * scaleFactor, Width - 105 * scaleFactor, 20 * scaleFactor);
+        Rectangle botRectangle = new Rectangle(45 * scaleFactor, Height - (35 + 90 + 20) * scaleFactor, Width - 105 * scaleFactor, 20 * scaleFactor);
         botRectangle.fillProperty().set(null);
         botRectangle.setStroke(Color.WHITE);
         group.getChildren().add(botRectangle);
 
-        drawBars(group, Height - (70 + 50) * scaleFactor);
+        drawBars(group, Height - (35 + 50) * scaleFactor);
 
-        Line botLine = new Line(0, Height - 70 * scaleFactor, Width, Height - 70 * scaleFactor);
+        Line botLine = new Line(0, Height - 35 * scaleFactor, Width, Height - 35 * scaleFactor);
         botLine.setStroke(Color.WHITE);
         group.getChildren().add(botLine);
 
-        Line leftSide = new Line(25 * scaleFactor, 70 * scaleFactor, 25 * scaleFactor, Height - 70 * scaleFactor);
+        Line leftSide = new Line(25 * scaleFactor, 35 * scaleFactor, 25 * scaleFactor, Height - 35 * scaleFactor);
         leftSide.setStroke(Color.WHITE);
         group.getChildren().add(leftSide);
 
-        Line rightSide = new Line(Width - 25 * scaleFactor, 70 * scaleFactor, Width - 25 * scaleFactor, Height - 70 * scaleFactor);
+        Line rightSide = new Line(Width - 25 * scaleFactor, 35 * scaleFactor, Width - 25 * scaleFactor, Height - 35 * scaleFactor);
         rightSide.setStroke(Color.WHITE);
         group.getChildren().add(rightSide);
 

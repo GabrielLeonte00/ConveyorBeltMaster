@@ -87,6 +87,8 @@
                               <TextField fx:id="textSpeed2" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                               <TextField fx:id="textAuxHeight" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                               <ComboBox fx:id="componentSkewLengthComboBox" prefWidth="150.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="componentDiverterLengthComboBox" prefWidth="150.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="componentDivertingAngleComboBox" prefWidth="150.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                            </children>
                         </GridPane>
                      </children>

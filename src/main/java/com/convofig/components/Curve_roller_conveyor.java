@@ -106,11 +106,6 @@ public class Curve_roller_conveyor extends Label {
         bounds.setStroke(Color.TRANSPARENT);
         group.getChildren().add(bounds);
 
-        Rectangle rectangle = new Rectangle(Width, Width);
-        rectangle.fillProperty().set(null);
-        rectangle.setStroke(Color.WHITE);
-        //group.getChildren().add(rectangle);
-
         Arc outerArc = new Arc();
         outerArc.setCenterX(Width);
         outerArc.setCenterY(Width);
@@ -125,8 +120,8 @@ public class Curve_roller_conveyor extends Label {
         Arc outerArc2 = new Arc();
         outerArc2.setCenterX(Width);
         outerArc2.setCenterY(Width);
-        outerArc2.setRadiusX(Width - 70 * scaleFactor);
-        outerArc2.setRadiusY(Width - 70 * scaleFactor);
+        outerArc2.setRadiusX(Width - 35 * scaleFactor);
+        outerArc2.setRadiusY(Width - 35 * scaleFactor);
         outerArc2.setStartAngle(180);
         outerArc2.fillProperty().set(null);
         outerArc2.setStroke(Color.WHITE);
@@ -147,8 +142,8 @@ public class Curve_roller_conveyor extends Label {
         Arc inerArc2 = new Arc();
         inerArc2.setCenterX(Width);
         inerArc2.setCenterY(Width);
-        inerArc2.setRadiusX((790 + 70) * scaleFactor);
-        inerArc2.setRadiusY((790 + 70) * scaleFactor);
+        inerArc2.setRadiusX((790 + 35) * scaleFactor);
+        inerArc2.setRadiusY((790 + 35) * scaleFactor);
         inerArc2.setStartAngle(180);
         inerArc2.fillProperty().set(null);
         inerArc2.setStroke(Color.WHITE);

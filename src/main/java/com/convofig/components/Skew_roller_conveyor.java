@@ -30,6 +30,7 @@ public class Skew_roller_conveyor extends Label {
     private Rectangle dragBounds;
     private Group group;
     private final double scaleFactor;
+    private double revertMove;
     private Text titleText;
     private final String control;
 
@@ -54,26 +55,32 @@ public class Skew_roller_conveyor extends Label {
             case 417:
                 skewRotation = 15;
                 skewFactor = 4;
+                revertMove = 6;
                 break;
             case 517:
                 skewRotation = 13;
                 skewFactor = 5;
+                revertMove = 13;
                 break;
             case 617:
                 skewRotation = 12;
                 skewFactor = 6;
+                revertMove = 23;
                 break;
             case 717:
                 skewRotation = 11;
                 skewFactor = 7;
+                revertMove = 32;
                 break;
             case 817:
                 skewRotation = 9;
                 skewFactor = 8;
+                revertMove = 40;
                 break;
             case 917:
                 skewRotation = 7;
                 skewFactor = 9;
+                revertMove = 50;
                 break;
         }
         switch (preScaleWidth) {
@@ -104,10 +111,11 @@ public class Skew_roller_conveyor extends Label {
         return Height;
     }
 
-    public void mouseEnteredDragZone(){
+    public void mouseEnteredDragZone() {
         dragBounds.setVisible(true);
     }
-    public void mouseExitedDragZone(){
+
+    public void mouseExitedDragZone() {
         dragBounds.setVisible(false);
     }
 
@@ -157,7 +165,7 @@ public class Skew_roller_conveyor extends Label {
         rectangle.setStroke(Color.WHITE);
         group.getChildren().add(rectangle);
 
-        Line topLine = new Line(0, 70 * scaleFactor, Width, 70 * scaleFactor);
+        Line topLine = new Line(0, 35 * scaleFactor, Width, 35 * scaleFactor);
         topLine.setStroke(Color.WHITE);
         group.getChildren().add(topLine);
 
@@ -171,13 +179,13 @@ public class Skew_roller_conveyor extends Label {
         drawBars(group, preScaleWidth - 130, preScaleHeight, false);
 
         if (Objects.equals(PolySide, "Left")) {
-            drawBars(group, 60, (double) preScaleHeight - 50 * skewFactor, true);
-            drawBars(group, preScaleWidth - 60, (double) preScaleHeight - 50 * skewFactor, false);
+            drawBars(group, 60, (double) preScaleHeight - 60 * skewFactor, true);
+            drawBars(group, preScaleWidth - 60, (double) preScaleHeight - 60 * skewFactor, false);
         } else {
-            drawBars(group, 60, (double) preScaleHeight - 50 * skewFactor, false);
-            drawBars(group, preScaleWidth - 60, (double) preScaleHeight - 50 * skewFactor, true);
+            drawBars(group, 60, (double) preScaleHeight - 60 * skewFactor, false);
+            drawBars(group, preScaleWidth - 60, (double) preScaleHeight - 60 * skewFactor, true);
         }
-        Line botLine = new Line(0, Height - 70 * scaleFactor, Width, Height - 70 * scaleFactor);
+        Line botLine = new Line(0, Height - 35 * scaleFactor, Width, Height - 35 * scaleFactor);
         botLine.setStroke(Color.WHITE);
         group.getChildren().add(botLine);
 
@@ -262,25 +270,25 @@ public class Skew_roller_conveyor extends Label {
     private void drawBars(Group group, double middleX, double heightBar, boolean revert) {
         Group groupBars = new Group();
         if (Objects.equals(PolySide, "Right")) {
-            groupBars.getChildren().add(drawRectangle(middleX - 15, 70, widthX(middleX, middleX - 15), 10)); //y = 70+10
-            groupBars.getChildren().add(drawRectangle(middleX - 25, 80, widthX(middleX, middleX - 25), 40)); //y = 80+40
-            groupBars.getChildren().add(drawRectangle(middleX - 30, 120, widthX(middleX, middleX - 30), heightBar - 150));
-            double nextY = 120 + heightBar - 150;
+            groupBars.getChildren().add(drawRectangle(middleX - 15, 35, widthX(middleX, middleX - 15), 10)); //y = 35+10
+            groupBars.getChildren().add(drawRectangle(middleX - 25, 45, widthX(middleX, middleX - 25), 40)); //y = 45+40
+            groupBars.getChildren().add(drawRectangle(middleX - 30, 85, widthX(middleX, middleX - 30), heightBar - 80));
+            double nextY = 85 + heightBar - 80;
             groupBars.getChildren().add((drawRectangle(middleX - 25, nextY, widthX(middleX, middleX - 25), 10)));
             groupBars.getChildren().add(drawRectangle(middleX - 20, nextY + 10, widthX(middleX, middleX - 20), 10)); //y = 70 + 10
             groupBars.setRotate(skewRotation);
         } else {
-            groupBars.getChildren().add(drawRectangle(middleX - 20, 70, widthX(middleX, middleX - 20), 10)); //y = 70 + 10
-            groupBars.getChildren().add((drawRectangle(middleX - 25, 80, widthX(middleX, middleX - 25), 10))); //y = 80 + 10
-            groupBars.getChildren().add(drawRectangle(middleX - 30, 90, widthX(middleX, middleX - 30), heightBar - 150));
-            double nextY = 90 + heightBar - 150;
+            groupBars.getChildren().add(drawRectangle(middleX - 20, 35, widthX(middleX, middleX - 20), 10)); //y = 35 + 10
+            groupBars.getChildren().add((drawRectangle(middleX - 25, 45, widthX(middleX, middleX - 25), 10))); //y = 45 + 10
+            groupBars.getChildren().add(drawRectangle(middleX - 30, 55, widthX(middleX, middleX - 30), heightBar - 80));
+            double nextY = 55 + heightBar - 80;
             groupBars.getChildren().add(drawRectangle(middleX - 25, nextY, widthX(middleX, middleX - 25), 40));
             groupBars.getChildren().add(drawRectangle(middleX - 15, nextY + 40, widthX(middleX, middleX - 15), 10));
             groupBars.setRotate(-skewRotation);
         }
 
         if (revert) {
-            groupBars.setLayoutY(Height / 2 - 35 * scaleFactor - 7 * scaleFactor);
+            groupBars.setLayoutY(Height / 2 + revertMove * scaleFactor);
         } else {
             groupBars.setTranslateY(7 * scaleFactor);
         }

@@ -105,7 +105,7 @@ public class Gravity_roller_conveyor extends Label {
         rectangle.setStroke(Color.WHITE);
         group.getChildren().add(rectangle);
 
-        Line topLine = new Line(0, 70 * scaleFactor, Width, 70 * scaleFactor);
+        Line topLine = new Line(0, 35 * scaleFactor, Width, 35 * scaleFactor);
         topLine.setStroke(Color.WHITE);
         group.getChildren().add(topLine);
 
@@ -115,36 +115,36 @@ public class Gravity_roller_conveyor extends Label {
 
         drawArrow(group, Height / 2);
 
-        Line botLine = new Line(0, Height - 70 * scaleFactor, Width, Height - 70 * scaleFactor);
+        Line botLine = new Line(0, Height - 35 * scaleFactor, Width, Height - 35 * scaleFactor);
         botLine.setStroke(Color.WHITE);
         group.getChildren().add(botLine);
 
-        group.getChildren().add(drawRectangle(30, 70 , 40, preScaleHeight-70));
-        group.getChildren().add(drawRectangle(90, 70 , 40, preScaleHeight-70));
+        group.getChildren().add(drawRectangle(10, 35 , 40, preScaleHeight));
+        group.getChildren().add(drawRectangle(70, 35 , 40, preScaleHeight));
 
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
         titleText.setStyle("-fx-font: 16 arial;");
-        titleText.setX(160 * scaleFactor); // Adjust the X position based on your requirement
+        titleText.setX(140 * scaleFactor); // Adjust the X position based on your requirement
         titleText.setY(Height / 2 - 30 * scaleFactor); // Adjust the Y position based on your requirement
         group.getChildren().add(titleText);
 
         Text textH = new Text("H1 = " + H1);
         textH.setFill(Color.LIGHTGREEN);
         textH.setStyle("-fx-font: 10 arial;");
-        textH.relocate(160 * scaleFactor, Height / 2 + 10 * scaleFactor);
+        textH.relocate(140 * scaleFactor, Height / 2 + 10 * scaleFactor);
         group.getChildren().add(textH);
 
         Text textV = new Text("H2 = " + H2);
         textV.setFill(Color.LIGHTGREEN);
         textV.setStyle("-fx-font: 10 arial;");
-        textV.relocate(160 * scaleFactor, Height / 2 + 45 * scaleFactor);
+        textV.relocate(140 * scaleFactor, Height / 2 + 45 * scaleFactor);
         group.getChildren().add(textV);
 
         Text textP = new Text("P = " + P);
         textP.setFill(Color.CYAN);
         textP.setStyle("-fx-font: 10 arial;");
-        textP.relocate(160 * scaleFactor, Height / 2 + 80 * scaleFactor);
+        textP.relocate(140 * scaleFactor, Height / 2 + 80 * scaleFactor);
         group.getChildren().add(textP);
 
         dragBounds = new Rectangle(Width / 2 - 100 * scaleFactor, Height / 2 - 100 * scaleFactor, 200 * scaleFactor, 200 * scaleFactor);
@@ -182,7 +182,7 @@ public class Gravity_roller_conveyor extends Label {
     }
 
     private void drawArrow(Group group, double y) {
-        double x = 160 * scaleFactor;
+        double x = 140 * scaleFactor;
         double[] arrowPoints = {
                 x, y,
                 x, y - 7 * scaleFactor,

@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class ConfigurationView extends MainView {
     private static Pane mainPane, drawPane;
-    private static ComboBox<String> componentTypeComboBox, componentWidthComboBox, componentLengthComboBox, componentSkewLengthComboBox, componentRollerPitchComboBox, componentPolyVeeSideComboBox, componentNoOfMDRComboBox, componentAngleComboBox, componentControlComboBox;
+    private static ComboBox<String> componentTypeComboBox, componentWidthComboBox, componentLengthComboBox, componentSkewLengthComboBox, componentRollerPitchComboBox, componentPolyVeeSideComboBox, componentNoOfMDRComboBox, componentAngleComboBox, componentControlComboBox, componentDiverterLengthComboBox, componentDivertingAngleComboBox;
     private static TextField textTitle, textSpeed1, textSpeed2, textHeight, textAuxHeight;
     private static Region componentRegion;
     private static double scaleFactor;
@@ -22,7 +22,7 @@ public class ConfigurationView extends MainView {
     private static double off_setInitialX;
     private static double off_setInitialY;
 
-    ConfigurationView(double scaleFactor, Pane mainPane, Pane drawPane, Region componentRegion, ComboBox<String> componentTypeComboBox, ComboBox<String> componentWidthComboBox, ComboBox<String> componentLengthComboBox, ComboBox<String> componentSkewLengthComboBox, ComboBox<String> componentRollerPitchComboBox, ComboBox<String> componentPolyVeeSideComboBox, ComboBox<String> componentNoOfMDRComboBox, TextField textTitle, TextField textSpeed1, TextField textSpeed2, TextField textHeight, TextField textAuxHeight, ComboBox<String> componentAngleComboBox, ComboBox<String> componentControlComboBox) {
+    ConfigurationView(double scaleFactor, Pane mainPane, Pane drawPane, Region componentRegion, ComboBox<String> componentTypeComboBox, ComboBox<String> componentWidthComboBox, ComboBox<String> componentLengthComboBox, ComboBox<String> componentSkewLengthComboBox, ComboBox<String> componentRollerPitchComboBox, ComboBox<String> componentPolyVeeSideComboBox, ComboBox<String> componentNoOfMDRComboBox, TextField textTitle, TextField textSpeed1, TextField textSpeed2, TextField textHeight, TextField textAuxHeight, ComboBox<String> componentAngleComboBox, ComboBox<String> componentControlComboBox, ComboBox<String> componentDiverterLengthComboBox, ComboBox<String> componentDivertingAngleComboBox) {
         ConfigurationView.mainPane = mainPane;
         ConfigurationView.drawPane = drawPane;
         ConfigurationView.componentTypeComboBox = componentTypeComboBox;
@@ -35,6 +35,8 @@ public class ConfigurationView extends MainView {
         ConfigurationView.componentNoOfMDRComboBox = componentNoOfMDRComboBox;
         ConfigurationView.componentAngleComboBox = componentAngleComboBox;
         ConfigurationView.componentControlComboBox = componentControlComboBox;
+        ConfigurationView.componentDivertingAngleComboBox = componentDivertingAngleComboBox;
+        ConfigurationView.componentDiverterLengthComboBox = componentDiverterLengthComboBox;
         ConfigurationView.textTitle = textTitle;
         ConfigurationView.textSpeed1 = textSpeed1;
         ConfigurationView.textSpeed2 = textSpeed2;
@@ -76,9 +78,13 @@ public class ConfigurationView extends MainView {
                 componentRegion.setPrefHeight((double) (Integer.parseInt(componentWidthComboBox.getItems().get((Integer) t1)) + 70 + 790) * scaleFactor);
                 componentRegion.setPrefWidth((double) (Integer.parseInt(componentWidthComboBox.getItems().get((Integer) t1)) + 70 + 790) * scaleFactor);
             }
+            if (componentTypeComboBox.getSelectionModel().getSelectedIndex() == 6) {
+                componentRegion.setPrefHeight((double) (Integer.parseInt(componentWidthComboBox.getItems().get((Integer) t1)) + 70 + 220) * scaleFactor);
+            }
         });
         componentLengthComboBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> componentRegion.setPrefWidth((double) Integer.parseInt(componentLengthComboBox.getItems().get((Integer) t1)) * scaleFactor));
         componentSkewLengthComboBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> componentRegion.setPrefWidth((double) Integer.parseInt(componentSkewLengthComboBox.getItems().get((Integer) t1)) * scaleFactor));
+        componentDiverterLengthComboBox.setOnAction(e -> componentRegion.setPrefWidth(Double.parseDouble(componentDiverterLengthComboBox.getSelectionModel().getSelectedItem()) * scaleFactor));
     }
 
     static void addComponent() {
@@ -127,7 +133,9 @@ public class ConfigurationView extends MainView {
 
             case 6:
                 //System.out.println("Diverter");
-                component = new Diverter();
+                width = Integer.parseInt(componentDiverterLengthComboBox.getSelectionModel().getSelectedItem()) * scaleFactor;
+                preScaleWidth = Integer.parseInt(componentDiverterLengthComboBox.getSelectionModel().getSelectedItem());
+                component = new Diverter(scaleFactor, preScaleWidth, preScaleHeight, width, height, componentPolyVeeSideComboBox.getSelectionModel().getSelectedItem(), textHeight.getText(), textSpeed1.getText(), componentRollerPitchComboBox.getSelectionModel().getSelectedItem(), textTitle.getText());
                 break;
         }
         if (component != null) {
@@ -176,7 +184,7 @@ public class ConfigurationView extends MainView {
         copyComponentMenuItem.setOnAction(event -> copyComponent(component, width, height));
         contextMenu.getItems().add(copyComponentMenuItem);
         MenuItem renameComponentMenuItem = new MenuItem("Rename");
-        
+
         renameComponentMenuItem.setOnAction(event -> {
             String currentName = null;
             if (component instanceof Curve_roller_conveyor)
@@ -321,7 +329,8 @@ public class ConfigurationView extends MainView {
         result.ifPresent(name -> {
             if (component instanceof Curve_roller_conveyor)
                 ((Curve_roller_conveyor) component).modifyTitle(result.get());
-            //if (component instanceof Diverter)
+            if (component instanceof Diverter)
+                ((Diverter) component).modifyTitle(result.get());
             if (component instanceof Gravity_roller_conveyor)
                 ((Gravity_roller_conveyor) component).modifyTitle(result.get());
             if (component instanceof Merge_conveyor)

@@ -171,20 +171,23 @@ public class Merge_conveyor extends Label {
         leftSide.setStroke(Color.WHITE);
         group.getChildren().add(leftSide);
 
+        double lesserX = Width - (preScaleHeight * scaleFactor) * Math.sqrt(3);
+        double lesserMiddleX = Width - ((double) preScaleHeight / 2 * scaleFactor) * Math.sqrt(3);
+
         if (Objects.equals(PolySide, "Left")) {
             Line topSide = new Line(0, 0, Width, 0);
             topSide.setStroke(Color.WHITE);
             group.getChildren().add(topSide);
 
-            Line topLine = new Line(0, 70 * scaleFactor, Width, 70 * scaleFactor);
+            Line topLine = new Line(0, 35 * scaleFactor, Width, 35 * scaleFactor);
             topLine.setStroke(Color.WHITE);
             group.getChildren().add(topLine);
 
-            Line bottomLine = new Line(0, Height - 70 * scaleFactor, lesserX, Height - 70 * scaleFactor);
+            Line bottomLine = new Line(0, Height - 35 * scaleFactor, lesserX, Height - 35 * scaleFactor);
             bottomLine.setStroke(Color.WHITE);
             group.getChildren().add(bottomLine);
 
-            Line topRight = new Line(Width, 0, Width, 70 * scaleFactor);
+            Line topRight = new Line(Width, 0, Width, 35 * scaleFactor);
             topRight.setStroke(Color.WHITE);
             group.getChildren().add(topRight);
 
@@ -192,7 +195,7 @@ public class Merge_conveyor extends Label {
             bottomSide.setStroke(Color.WHITE);
             group.getChildren().add(bottomSide);
 
-            Line rightSide = new Line(Width, 70 * scaleFactor, lesserWidth, Height);
+            Line rightSide = new Line(Width, 35 * scaleFactor, lesserWidth, Height);
             rightSide.setStroke(Color.WHITE);
             group.getChildren().add(rightSide);
         } else {
@@ -200,15 +203,15 @@ public class Merge_conveyor extends Label {
             topSide.setStroke(Color.WHITE);
             group.getChildren().add(topSide);
 
-            Line topLine = new Line(0, 70 * scaleFactor, lesserX, 70 * scaleFactor);
+            Line topLine = new Line(0, 35 * scaleFactor, lesserX, 35 * scaleFactor);
             topLine.setStroke(Color.WHITE);
             group.getChildren().add(topLine);
 
-            Line bottomLine = new Line(0, Height - 70 * scaleFactor, Width, Height - 70 * scaleFactor);
+            Line bottomLine = new Line(0, Height - 35 * scaleFactor, Width, Height - 35 * scaleFactor);
             bottomLine.setStroke(Color.WHITE);
             group.getChildren().add(bottomLine);
 
-            Line bottomRight = new Line(Width, Height - 70 * scaleFactor, Width, Height);
+            Line bottomRight = new Line(Width, Height - 35 * scaleFactor, Width, Height);
             bottomRight.setStroke(Color.WHITE);
             group.getChildren().add(bottomRight);
 
@@ -216,7 +219,7 @@ public class Merge_conveyor extends Label {
             bottomSide.setStroke(Color.WHITE);
             group.getChildren().add(bottomSide);
 
-            Line rightSide = new Line(lesserWidth, 0, Width, Height - 70 * scaleFactor);
+            Line rightSide = new Line(lesserWidth, 0, Width, Height - 35 * scaleFactor);
             rightSide.setStroke(Color.WHITE);
             group.getChildren().add(rightSide);
         }
@@ -226,8 +229,8 @@ public class Merge_conveyor extends Label {
 
         double xPositionCircles = 100 * scaleFactor;
         double circleDistance = 20;
-        drawSmallCircles(group, xPositionCircles / 2, 35 * scaleFactor, circleDistance);
-        drawSmallCircles(group, xPositionCircles / 2, Height - 35 * scaleFactor, circleDistance);
+        drawSmallCircles(group, xPositionCircles / 2, (double) 35 / 2 * scaleFactor, circleDistance);
+        drawSmallCircles(group, xPositionCircles / 2, Height - (double) 35 / 2 * scaleFactor, circleDistance);
 
         Line middleLine = new Line(0, Height / 2, lesserMiddleX, Height / 2);
         middleLine.setStroke(Color.RED);
@@ -306,17 +309,17 @@ public class Merge_conveyor extends Label {
 
     private void drawBars(Group group, double middleX) {
         if (Objects.equals(PolySide, "Left")) {
-            group.getChildren().add(drawRectangle(middleX - 15, 70, widthX(middleX, middleX - 15), 10)); //y = 70+10
-            group.getChildren().add(drawRectangle(middleX - 25, 80, widthX(middleX, middleX - 25), 50)); //y = 80+50
-            group.getChildren().add(drawRectangle(middleX - 30, 130, widthX(middleX, middleX - 30), preScaleHeight - 150));
-            double nextY = 130 + preScaleHeight - 150;
+            group.getChildren().add(drawRectangle(middleX - 15, 35, widthX(middleX, middleX - 15), 10)); //y = 35+10
+            group.getChildren().add(drawRectangle(middleX - 25, 45, widthX(middleX, middleX - 25), 50)); //y = 45+50
+            group.getChildren().add(drawRectangle(middleX - 30, 95, widthX(middleX, middleX - 30), preScaleHeight - 80));
+            double nextY = 95 + preScaleHeight - 80;
             group.getChildren().add((drawRectangle(middleX - 25, nextY, widthX(middleX, middleX - 25), 10)));
-            group.getChildren().add(drawRectangle(middleX - 20, nextY + 10, widthX(middleX, middleX - 20), 10)); //y = 70 + 10
+            group.getChildren().add(drawRectangle(middleX - 20, nextY + 10, widthX(middleX, middleX - 20), 10));
         } else {
-            group.getChildren().add(drawRectangle(middleX - 20, 70, widthX(middleX, middleX - 20), 10)); //y = 70 + 10
-            group.getChildren().add((drawRectangle(middleX - 25, 80, widthX(middleX, middleX - 25), 10))); //y = 80 + 10
-            group.getChildren().add(drawRectangle(middleX - 30, 90, widthX(middleX, middleX - 30), preScaleHeight - 150));
-            double nextY = 90 + preScaleHeight - 150;
+            group.getChildren().add(drawRectangle(middleX - 20, 35, widthX(middleX, middleX - 20), 10)); //y = 35 + 10
+            group.getChildren().add((drawRectangle(middleX - 25, 45, widthX(middleX, middleX - 25), 10))); //y = 45 + 10
+            group.getChildren().add(drawRectangle(middleX - 30, 55, widthX(middleX, middleX - 30), preScaleHeight - 80));
+            double nextY = 55 + preScaleHeight - 80;
             group.getChildren().add(drawRectangle(middleX - 25, nextY, widthX(middleX, middleX - 25), 50));
             group.getChildren().add(drawRectangle(middleX - 15, nextY + 50, widthX(middleX, middleX - 15), 10));
         }

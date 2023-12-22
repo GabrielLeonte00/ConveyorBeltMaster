@@ -61,6 +61,10 @@ public class MainView extends MainApplication {
     @FXML
     private ComboBox<String> componentLengthComboBox;
     @FXML
+    private ComboBox<String> componentDiverterLengthComboBox;
+    @FXML
+    private ComboBox<String> componentDivertingAngleComboBox;
+    @FXML
     private ComboBox<String> componentRollerPitchComboBox;
     @FXML
     private ComboBox<String> componentPolyVeeSideComboBox;
@@ -113,7 +117,7 @@ public class MainView extends MainApplication {
 
     @FXML
     public void initialize() {
-        new ConfigurationView(scaleFactor, mainPane, drawPane, componentRegion, componentTypeComboBox, componentWidthComboBox, componentLengthComboBox, componentSkewLengthComboBox, componentRollerPitchComboBox, componentPolyVeeSideComboBox, componentNoOfMDRComboBox, textTitle, textSpeed1, textSpeed2, textHeight, textAuxHeight, componentAngleComboBox, componentControlComboBox);
+        new ConfigurationView(scaleFactor, mainPane, drawPane, componentRegion, componentTypeComboBox, componentWidthComboBox, componentLengthComboBox, componentSkewLengthComboBox, componentRollerPitchComboBox, componentPolyVeeSideComboBox, componentNoOfMDRComboBox, textTitle, textSpeed1, textSpeed2, textHeight, textAuxHeight, componentAngleComboBox, componentControlComboBox, componentDiverterLengthComboBox, componentDivertingAngleComboBox);
 
         addMovingDrawingPane();
         getOffsetsForMove();
@@ -160,6 +164,14 @@ public class MainView extends MainApplication {
             componentLengthComboBox.getItems().add(String.valueOf(i));
         }
         componentLengthComboBox.getSelectionModel().select(0);
+
+        for (int i = 30; i <= 45; i++) {
+            componentDivertingAngleComboBox.getItems().add(String.valueOf(i));
+        }
+        componentDivertingAngleComboBox.getSelectionModel().select(0);
+
+        componentDiverterLengthComboBox.getItems().addAll("500", "600", "720");
+        componentDiverterLengthComboBox.getSelectionModel().select(0);
         componentSkewLengthComboBox.getItems().addAll("1440", "1800", "2160", "2880");
         componentSkewLengthComboBox.getSelectionModel().select(0);
         componentRollerPitchComboBox.getItems().addAll("60", "90", "120");
@@ -570,7 +582,7 @@ public class MainView extends MainApplication {
             drawPane.getChildren().add(newComponent);
         }
         if (Objects.equals(data[0], "Diverter")) {
-            Diverter newComponent = new Diverter();
+            Diverter newComponent = new Diverter(Double.parseDouble(data[4]), Integer.parseInt(data[5]), Integer.parseInt(data[6]), Double.parseDouble(data[7]), Double.parseDouble(data[8]), data[9], data[10], data[11], data[12], data[13]);
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
@@ -733,6 +745,8 @@ public class MainView extends MainApplication {
                     textSpeed1.setVisible(true);
                     labelControl.setDisable(false);
                     componentControlComboBox.setDisable(false);
+                    componentDivertingAngleComboBox.setVisible(false);
+                    componentDiverterLengthComboBox.setVisible(false);
                     componentRegion.setPrefWidth((Integer.parseInt(componentLengthComboBox.getSelectionModel().getSelectedItem())) * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
@@ -760,6 +774,8 @@ public class MainView extends MainApplication {
                     textSpeed1.setVisible(true);
                     labelControl.setDisable(true);
                     componentControlComboBox.setDisable(true);
+                    componentDivertingAngleComboBox.setVisible(false);
+                    componentDiverterLengthComboBox.setVisible(false);
                     componentRegion.setPrefWidth((Integer.parseInt(componentLengthComboBox.getSelectionModel().getSelectedItem())) * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
@@ -787,6 +803,8 @@ public class MainView extends MainApplication {
                     labelHeight.setText("Height (mm)");
                     labelControl.setDisable(false);
                     componentControlComboBox.setDisable(false);
+                    componentDivertingAngleComboBox.setVisible(false);
+                    componentDiverterLengthComboBox.setVisible(false);
                     componentRegion.setPrefWidth(780 * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
@@ -813,6 +831,8 @@ public class MainView extends MainApplication {
                     textSpeed1.setVisible(true);
                     labelControl.setDisable(false);
                     componentControlComboBox.setDisable(false);
+                    componentDivertingAngleComboBox.setVisible(false);
+                    componentDiverterLengthComboBox.setVisible(false);
                     switch (componentWidthComboBox.getSelectionModel().getSelectedIndex()) {
                         case 0:
                             componentRegion.setPrefWidth(988 * scaleFactor);
@@ -857,6 +877,8 @@ public class MainView extends MainApplication {
                     textSpeed1.setVisible(true);
                     labelControl.setDisable(false);
                     componentControlComboBox.setDisable(false);
+                    componentDivertingAngleComboBox.setVisible(false);
+                    componentDiverterLengthComboBox.setVisible(false);
                     componentRegion.setPrefWidth((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70 + 790) * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70 + 790) * scaleFactor);
                     break;
@@ -874,6 +896,7 @@ public class MainView extends MainApplication {
                     componentPolyVeeSideComboBox.setVisible(true);
                     labelPolySide.setVisible(true);
                     componentNoOfMDRComboBox.setVisible(false);
+                    componentDivertingAngleComboBox.setVisible(false);
                     labelNoMDR.setVisible(false);
                     labelNoMDR.setText("No. of MDR");
                     textSpeed2.setVisible(false);
@@ -883,12 +906,38 @@ public class MainView extends MainApplication {
                     textSpeed1.setVisible(true);
                     labelControl.setDisable(false);
                     componentControlComboBox.setDisable(false);
+                    componentDiverterLengthComboBox.setVisible(false);
                     componentRegion.setPrefWidth((Integer.parseInt(componentSkewLengthComboBox.getSelectionModel().getSelectedItem())) * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
 
                 case 6:
                     //System.out.println("Diverter");
+                    componentLengthComboBox.setVisible(false);
+                    componentSkewLengthComboBox.setVisible(false);
+                    componentDiverterLengthComboBox.setVisible(true);
+                    labelLength.setText("Length (mm)");
+                    labelLength.setVisible(true);
+                    componentLengthComboBox.setVisible(true);
+                    textLength90Transfer.setVisible(false);
+                    componentAngleComboBox.setVisible(false);
+                    componentRollerPitchComboBox.setVisible(true);
+                    labelPitch.setVisible(true);
+                    componentPolyVeeSideComboBox.setVisible(true);
+                    labelPolySide.setVisible(true);
+                    componentNoOfMDRComboBox.setVisible(false);
+                    componentDivertingAngleComboBox.setVisible(true);
+                    labelNoMDR.setVisible(true);
+                    labelNoMDR.setText("Diverting angle");
+                    textSpeed2.setVisible(false);
+                    labelSpeed.setText("Speed (m/min)");
+                    labelHeight.setText("Height (mm)");
+                    textAuxHeight.setVisible(false);
+                    textSpeed1.setVisible(true);
+                    labelControl.setDisable(false);
+                    componentControlComboBox.setDisable(false);
+                    componentRegion.setPrefWidth((Integer.parseInt(componentDiverterLengthComboBox.getSelectionModel().getSelectedItem())) * scaleFactor);
+                    componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70 + 220) * scaleFactor);
                     break;
             }
         });
