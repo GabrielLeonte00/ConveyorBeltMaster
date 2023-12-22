@@ -13,6 +13,9 @@ module com.convofig.conveyorbeltmaster {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.desktop;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml;
+    requires annotations;
 
     opens com.convofig.conveyorbeltmaster to javafx.fxml;
     exports com.convofig.conveyorbeltmaster;

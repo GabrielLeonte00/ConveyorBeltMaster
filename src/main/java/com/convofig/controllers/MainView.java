@@ -1,5 +1,6 @@
 package com.convofig.controllers;
 
+import com.convofig.classes.exportExcel;
 import com.convofig.components.*;
 import com.convofig.conveyorbeltmaster.MainApplication;
 import javafx.application.Platform;
@@ -20,6 +21,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -118,7 +120,7 @@ public class MainView extends MainApplication {
     @FXML
     public void initialize() {
         new ConfigurationView(scaleFactor, mainPane, drawPane, componentRegion, componentTypeComboBox, componentWidthComboBox, componentLengthComboBox, componentSkewLengthComboBox, componentRollerPitchComboBox, componentPolyVeeSideComboBox, componentNoOfMDRComboBox, textTitle, textSpeed1, textSpeed2, textHeight, textAuxHeight, componentAngleComboBox, componentControlComboBox, componentDiverterLengthComboBox, componentDivertingAngleComboBox);
-
+        exportExcel dataExcel = new exportExcel(drawPane);
         addMovingDrawingPane();
         getOffsetsForMove();
     }
@@ -598,7 +600,7 @@ public class MainView extends MainApplication {
             drawPane.getChildren().add(newComponent);
         }
         if (Objects.equals(data[0], "Merge_conveyor")) {
-            Merge_conveyor newComponent = new Merge_conveyor(Double.parseDouble(data[4]), Integer.parseInt(data[5]), Integer.parseInt(data[6]), data[7], data[8], data[9], data[10], data[11], data[12]);
+            Merge_conveyor newComponent = new Merge_conveyor(Double.parseDouble(data[4]), Integer.parseInt(data[5]), Double.parseDouble(data[6]), data[7], data[8], data[9], data[10], data[11], data[12]);
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
@@ -611,6 +613,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
+            newComponent.updateRevert(Integer.parseInt(data[16]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
         }
@@ -694,27 +697,42 @@ public class MainView extends MainApplication {
         if (file != null) {
             try {
                 // Get the pixel data from the writable image
-                PixelReader pixelReader = writableImage.getPixelReader();
-                int width = (int) writableImage.getWidth();
-                int height = (int) writableImage.getHeight();
-
-                // Create a BufferedImage and copy pixel data
-                BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                for (int x = 0; x < width; x++) {
-                    for (int y = 0; y < height; y++) {
-                        javafx.scene.paint.Color color = pixelReader.getColor(x, y);
-                        int argb = (int) (color.getOpacity() * 255) << 24 |
-                                (int) (color.getRed() * 255) << 16 |
-                                (int) (color.getGreen() * 255) << 8 |
-                                (int) (color.getBlue() * 255);
-                        bufferedImage.setRGB(x, y, argb);
-                    }
-                }
+                BufferedImage bufferedImage = getBufferedImage(writableImage);
 
                 // Save the BufferedImage to the chosen file
                 ImageIO.write(bufferedImage, "png", file);
             } catch (IOException ignored) {
             }
+        }
+    }
+
+    @NotNull
+    private static BufferedImage getBufferedImage(WritableImage writableImage) {
+        PixelReader pixelReader = writableImage.getPixelReader();
+        int width = (int) writableImage.getWidth();
+        int height = (int) writableImage.getHeight();
+
+        // Create a BufferedImage and copy pixel data
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Color color = pixelReader.getColor(x, y);
+                int argb = (int) (color.getOpacity() * 255) << 24 |
+                        (int) (color.getRed() * 255) << 16 |
+                        (int) (color.getGreen() * 255) << 8 |
+                        (int) (color.getBlue() * 255);
+                bufferedImage.setRGB(x, y, argb);
+            }
+        }
+        return bufferedImage;
+    }
+
+    @FXML
+    void extractExcelMethod() {
+        if (drawPane.getChildren().isEmpty()) {
+            System.out.println("Empty");
+        } else {
+            exportExcel.startExport();
         }
     }
 

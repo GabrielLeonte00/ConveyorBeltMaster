@@ -88,7 +88,7 @@ public class Merge_conveyor extends Label {
         this.Height = Height;
         this.control = control;
         Component_name = "Merge conveyor";
-        Type_code = "ST01";
+        Type_code = "G5304";
         excelData = new String[22];
         Arrays.fill(excelData, "");
         createComponent();

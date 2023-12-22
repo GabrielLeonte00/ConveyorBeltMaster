@@ -107,7 +107,7 @@
                   <SeparatorMenuItem mnemonicParsing="false" />
               <MenuItem fx:id="SaveMI" disable="true" mnemonicParsing="false" onAction="#saveMethod" text="Save" />
                   <MenuItem fx:id="ExportDraftMI" disable="true" mnemonicParsing="false" onAction="#exportMethod" text="Export draft" />
-                  <MenuItem fx:id="ExportExcelMI" disable="true" mnemonicParsing="false" text="Export excel" />
+                  <MenuItem fx:id="ExportExcelMI" disable="true" mnemonicParsing="false" onAction="#extractExcelMethod" text="Export excel" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#quitMethod" text="Quit" />
             </items>

@@ -54,7 +54,7 @@ public class Curve_roller_conveyor extends Label {
         excelData[2] = Component_name;
         excelData[3] = "1";
         excelData[4] = "0";
-        excelData[5] = Integer.toString((int) preWidth);
+        excelData[5] = (int) preWidth + "+70";
         excelData[6] = V;
         excelData[7] = H;
         excelData[10] = angle;

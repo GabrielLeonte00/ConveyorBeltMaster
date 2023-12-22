@@ -176,6 +176,8 @@ public class ConfigurationView extends MainView {
         MenuItem rotateMenuItem = new MenuItem("Rotate");
         rotateMenuItem.setOnAction(event -> showRotateDialog(component));
         contextMenu.getItems().add(rotateMenuItem);
+        MenuItem revertMenuItem = new MenuItem("Revert");
+        contextMenu.getItems().add(revertMenuItem);
         MenuItem clearRotateMenuItem = new MenuItem("Clear");
         clearRotateMenuItem.setOnAction(event -> clearRotation(component));
         contextMenu.getItems().add(clearRotateMenuItem);
@@ -189,7 +191,8 @@ public class ConfigurationView extends MainView {
             String currentName = null;
             if (component instanceof Curve_roller_conveyor)
                 currentName = ((Curve_roller_conveyor) component).getCurrentName();
-            //if (component instanceof Diverter)
+            if (component instanceof Diverter)
+                currentName = ((Diverter) component).getCurrentName();
             if (component instanceof Gravity_roller_conveyor)
                 currentName = ((Gravity_roller_conveyor) component).getCurrentName();
             if (component instanceof Merge_conveyor)
@@ -209,6 +212,7 @@ public class ConfigurationView extends MainView {
         if (component instanceof Motorized_roller_conveyor) {
             sideComponentMenuItem.setVisible(true);
             sideComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).changeSide());
+            revertMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).revertComponent());
         }
         contextMenu.getItems().add(sideComponentMenuItem);
         MenuItem removeComponentMenuItem = new MenuItem("Remove");

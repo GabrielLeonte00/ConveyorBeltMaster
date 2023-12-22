@@ -23,12 +23,13 @@ public class Motorized_roller_conveyor extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
+    private int revert;
     private final double scaleFactor;
-    private Text titleText;
+    private Text titleText, textH, textV, textP;
     private final String control;
     private Rectangle bounds;
     private Rectangle dragBounds;
-    private Group group;
+    private Group group, textGroup;
 
     public Motorized_roller_conveyor(double scaleFactor, int preScaleWidth, int preScaleHeight, double Width, double Height, String PolySide, String No_MDR, String H, String V, String P, String title, String control) {
         super();
@@ -44,6 +45,7 @@ public class Motorized_roller_conveyor extends Label {
         this.control = control;
         this.preScaleHeight = preScaleHeight;
         this.preScaleWidth = preScaleWidth;
+        this.revert = 1;
         Component_name = "Motorized roller conveyor";
         Type_code = "G5301A";
         excelData = new String[22];
@@ -53,7 +55,7 @@ public class Motorized_roller_conveyor extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + PolySide + "," + No_MDR + "," + H + "," + V + "," + P + "," + title + "," + control;
+        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + PolySide + "," + No_MDR + "," + H + "," + V + "," + P + "," + title + "," + control + "," + revert;
     }
 
     public double getWidthForLoad() {
@@ -101,6 +103,18 @@ public class Motorized_roller_conveyor extends Label {
         titleText.setText(newTitle);
     }
 
+    public void revertComponent() {
+        revert = -revert;
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
+    }
+
+    public void updateRevert(int revert) {
+        this.revert = revert;
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
+    }
+
     public void changeSide() {
         group.getChildren().clear();
         if (Objects.equals(PolySide, "Left")) {
@@ -145,39 +159,41 @@ public class Motorized_roller_conveyor extends Label {
 
         double xPositionCircles = 100 * scaleFactor;
         double circleDistance = 20;
-        drawSmallCircles(group, xPositionCircles / 2, (double) 35 /2 * scaleFactor, circleDistance);
-        drawSmallCircles(group, Width - xPositionCircles / 2, (double) 35 /2 * scaleFactor, circleDistance);
-        drawSmallCircles(group, xPositionCircles / 2, Height - (double) 35 /2 * scaleFactor, circleDistance);
-        drawSmallCircles(group, Width - xPositionCircles / 2, Height - (double) 35 /2 * scaleFactor, circleDistance);
+        drawSmallCircles(group, xPositionCircles / 2, (double) 35 / 2 * scaleFactor, circleDistance);
+        drawSmallCircles(group, Width - xPositionCircles / 2, (double) 35 / 2 * scaleFactor, circleDistance);
+        drawSmallCircles(group, xPositionCircles / 2, Height - (double) 35 / 2 * scaleFactor, circleDistance);
+        drawSmallCircles(group, Width - xPositionCircles / 2, Height - (double) 35 / 2 * scaleFactor, circleDistance);
 
         Line middleLine = new Line(0, Height / 2, Width, Height / 2);
         middleLine.setStroke(Color.RED);
         group.getChildren().add(middleLine);
 
+        textGroup = new Group();
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
         titleText.setStyle("-fx-font: 16 arial;");
         titleText.setX(120 * scaleFactor); // Adjust the X position based on your requirement
         titleText.setY(Height / 2 - 30 * scaleFactor); // Adjust the Y position based on your requirement
-        group.getChildren().add(titleText);
+        textGroup.getChildren().add(titleText);
 
-        Text textH = new Text("H = " + H);
+        textH = new Text("H = " + H);
         textH.setFill(Color.LIGHTGREEN);
         textH.setStyle("-fx-font: 10 arial;");
         textH.relocate(120 * scaleFactor, Height / 2 + 10 * scaleFactor);
-        group.getChildren().add(textH);
+        textGroup.getChildren().add(textH);
 
-        Text textV = new Text("V = " + V);
+        textV = new Text("V = " + V);
         textV.setFill(Color.BLUE);
         textV.setStyle("-fx-font: 10 arial;");
         textV.relocate(120 * scaleFactor, Height / 2 + 45 * scaleFactor);
-        group.getChildren().add(textV);
+        textGroup.getChildren().add(textV);
 
-        Text textP = new Text("P = " + P);
+        textP = new Text("P = " + P);
         textP.setFill(Color.CYAN);
         textP.setStyle("-fx-font: 10 arial;");
         textP.relocate(120 * scaleFactor, Height / 2 + 80 * scaleFactor);
-        group.getChildren().add(textP);
+        textGroup.getChildren().add(textP);
+        group.getChildren().add(textGroup);
 
         dragBounds = new Rectangle(Width / 2 - 100 * scaleFactor, Height / 2 - 100 * scaleFactor, 200 * scaleFactor, 200 * scaleFactor);
         dragBounds.setFill(Color.rgb(127, 255, 212, 0.25));
@@ -185,6 +201,8 @@ public class Motorized_roller_conveyor extends Label {
         dragBounds.setVisible(false);
         group.getChildren().add(dragBounds);
 
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
         setGraphic(group);
     }
 
@@ -193,7 +211,7 @@ public class Motorized_roller_conveyor extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-
+        copy.updateRevert(revert);
         return copy;
     }
 

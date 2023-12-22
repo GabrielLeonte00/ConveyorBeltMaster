@@ -43,8 +43,8 @@ public class Diverter extends Label {
         this.preScaleHeight = preScaleHeight;
         this.preScaleWidth = preScaleWidth;
 
-        Component_name = "Motorized roller conveyor";
-        Type_code = "G5301A";
+        Component_name = "Diverter";
+        Type_code = "ST01";
         excelData = new String[22];
         Arrays.fill(excelData, "");
         createComponent();
