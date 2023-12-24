@@ -15,7 +15,10 @@ import java.util.regex.Pattern;
 
 public class Transfer_module_90_degree extends Label {
 
-    private final String H, V1, V2, P;
+    private String H;
+    private String V1;
+    private String V2;
+    private final String P;
     private final double Width, Height;
     private final int preScaleWidth, preScaleHeight;
     private String title;
@@ -23,11 +26,12 @@ public class Transfer_module_90_degree extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
+    private int revert = 1;
     private Rectangle bounds;
     private Rectangle dragBounds;
-    private Group group;
+    private Group group, componentGroup;
     private final double scaleFactor;
-    private Text titleText;
+    private Text titleText, textH, textV1, textV2;
     private final String control;
 
     public Transfer_module_90_degree(double scaleFactor, int preScaleWidth, int preScaleHeight, double Width, double Height, String H, String V1, String V2, String P, String title, String control) {
@@ -52,7 +56,7 @@ public class Transfer_module_90_degree extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + H + "," + V1 + "," + V2 + "," + P + "," + title + "," + control;
+        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + H + "," + V1 + "," + V2 + "," + P + "," + title + "," + control + "," + revert;
     }
 
     public double getWidthForLoad() {
@@ -82,7 +86,7 @@ public class Transfer_module_90_degree extends Label {
         excelData[7] = H;
         excelData[13] = control;
         if (Objects.equals(control, "EQube AI") || Objects.equals(control, "EZQube"))
-            excelData[14] = "1";
+            excelData[14] = "3";
         else if (Objects.equals(control, "Conveylinx-Eco") || Objects.equals(control, "Conveylinx AI2"))
             excelData[14] = "2";
         excelData[15] = "3";
@@ -92,18 +96,58 @@ public class Transfer_module_90_degree extends Label {
         return excelData;
     }
 
-    public void modifyTitle(String newTitle) {
-        title = newTitle;
-        titleText.setText(newTitle);
+    public void modifyTitle(String newValue) {
+        title = newValue;
+        titleText.setText(newValue);
     }
+
+    public void modifyH(String newValue) {
+        H = newValue;
+        textH.setText("H = " + newValue);
+    }
+
+    public void modifyV(int NO, String newValue) {
+        if (NO == 1) {
+            V1 = newValue;
+            textV1.setText("V1 = " + newValue);
+        } else {
+            V2 = newValue;
+            textV2.setText("V2 = " + newValue);
+        }
+    }
+
+
+    public void revertComponent() {
+        revert = -revert;
+        componentGroup.setScaleX(revert);
+    }
+
+    public void updateRevert(int revert) {
+        this.revert = revert;
+        componentGroup.setScaleX(revert);
+    }
+
 
     public String getCurrentName() {
         return title;
     }
 
+    public String getCurrentH() {
+        return H;
+    }
+
+    public String getCurrentV(int NO) {
+        if (NO == 1) {
+            return V1;
+        } else {
+            return V2;
+        }
+    }
+
     private void createComponent() {
 
         group = new Group();
+        componentGroup = new Group();
 
         bounds = new Rectangle(Width, Height);
         bounds.fillProperty().set(null);
@@ -113,66 +157,68 @@ public class Transfer_module_90_degree extends Label {
         Rectangle rectangle = new Rectangle(Width, Height);
         rectangle.fillProperty().set(null);
         rectangle.setStroke(Color.WHITE);
-        group.getChildren().add(rectangle);
+        componentGroup.getChildren().add(rectangle);
 
         Line topLine = new Line(0, 35 * scaleFactor, Width, 35 * scaleFactor);
         topLine.setStroke(Color.WHITE);
-        group.getChildren().add(topLine);
+        componentGroup.getChildren().add(topLine);
 
-        drawBars(group, (35 + 50) * scaleFactor);
+        drawBars(componentGroup, (35 + 50) * scaleFactor);
 
         Rectangle topRectangle = new Rectangle(45 * scaleFactor, (35 + 90) * scaleFactor, Width - 105 * scaleFactor, 20 * scaleFactor);
         topRectangle.fillProperty().set(null);
         topRectangle.setStroke(Color.WHITE);
-        group.getChildren().add(topRectangle);
+        componentGroup.getChildren().add(topRectangle);
 
         Line middleLine = new Line(0, Height / 2, Width, Height / 2);
         middleLine.setStroke(Color.RED);
-        group.getChildren().add(middleLine);
+        componentGroup.getChildren().add(middleLine);
 
         Rectangle botRectangle = new Rectangle(45 * scaleFactor, Height - (35 + 90 + 20) * scaleFactor, Width - 105 * scaleFactor, 20 * scaleFactor);
         botRectangle.fillProperty().set(null);
         botRectangle.setStroke(Color.WHITE);
-        group.getChildren().add(botRectangle);
+        componentGroup.getChildren().add(botRectangle);
 
-        drawBars(group, Height - (35 + 50) * scaleFactor);
+        drawBars(componentGroup, Height - (35 + 50) * scaleFactor);
 
         Line botLine = new Line(0, Height - 35 * scaleFactor, Width, Height - 35 * scaleFactor);
         botLine.setStroke(Color.WHITE);
-        group.getChildren().add(botLine);
+        componentGroup.getChildren().add(botLine);
 
         Line leftSide = new Line(25 * scaleFactor, 35 * scaleFactor, 25 * scaleFactor, Height - 35 * scaleFactor);
         leftSide.setStroke(Color.WHITE);
-        group.getChildren().add(leftSide);
+        componentGroup.getChildren().add(leftSide);
 
         Line rightSide = new Line(Width - 25 * scaleFactor, 35 * scaleFactor, Width - 25 * scaleFactor, Height - 35 * scaleFactor);
         rightSide.setStroke(Color.WHITE);
-        group.getChildren().add(rightSide);
+        componentGroup.getChildren().add(rightSide);
 
+        Group textGroup = new Group();
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
         titleText.setStyle("-fx-font: 16 arial;");
         titleText.setX(120 * scaleFactor); // Adjust the X position based on your requirement
         titleText.setY(Height / 2 - 15 * scaleFactor); // Adjust the Y position based on your requirement
-        group.getChildren().add(titleText);
+        textGroup.getChildren().add(titleText);
 
-        Text textH = new Text("H = " + H);
+        textH = new Text("H = " + H);
         textH.setFill(Color.LIGHTGREEN);
-        textH.setStyle("-fx-font: 10 arial;");
-        textH.relocate(120 * scaleFactor, Height / 2 + 10 * scaleFactor);
-        group.getChildren().add(textH);
+        textH.setStyle("-fx-font: 12 arial;");
+        textH.relocate(120 * scaleFactor, Height / 2 + 20 * scaleFactor);
+        textGroup.getChildren().add(textH);
 
-        Text textV1 = new Text("V1 = " + V1);
-        textV1.setFill(Color.BLUE);
-        textV1.setStyle("-fx-font: 10 arial;");
-        textV1.relocate((120 + 150) * scaleFactor, Height / 2 + 10 * scaleFactor);
-        group.getChildren().add(textV1);
+        textV1 = new Text("V1 = " + V1);
+        textV1.setFill(Color.DEEPSKYBLUE);
+        textV1.setStyle("-fx-font: 12 arial;");
+        textV1.relocate((120 + 150) * scaleFactor, Height / 2 + 20 * scaleFactor);
+        textGroup.getChildren().add(textV1);
 
-        Text textV2 = new Text("V2 = " + V2);
-        textV2.setFill(Color.BLUE);
-        textV2.setStyle("-fx-font: 10 arial;");
-        textV2.relocate((120 + 300) * scaleFactor, Height / 2 + 10 * scaleFactor);
-        group.getChildren().add(textV2);
+        textV2 = new Text("V2 = " + V2);
+        textV2.setFill(Color.DEEPSKYBLUE);
+        textV2.setStyle("-fx-font: 12 arial;");
+        textV2.relocate((120 + 300) * scaleFactor, Height / 2 + 20 * scaleFactor);
+        textGroup.getChildren().add(textV2);
+        group.getChildren().add(textGroup);
 
         dragBounds = new Rectangle(Width / 2 - 100 * scaleFactor, Height / 2 - 100 * scaleFactor, 200 * scaleFactor, 200 * scaleFactor);
         dragBounds.setFill(Color.rgb(127, 255, 212, 0.25));
@@ -180,6 +226,8 @@ public class Transfer_module_90_degree extends Label {
         dragBounds.setVisible(false);
         group.getChildren().add(dragBounds);
 
+        group.getChildren().add(componentGroup);
+        componentGroup.setScaleX(revert);
         setGraphic(group);
     }
 
@@ -188,7 +236,7 @@ public class Transfer_module_90_degree extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-
+        copy.updateRevert(revert);
         return copy;
     }
 

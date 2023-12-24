@@ -38,7 +38,7 @@ public class MainView extends MainApplication {
     private double initialWidth, initialHeight;
     private MenuItem zoomInMenu;
     private MenuItem zoomOutMenu;
-    private final double scaleFactor = 0.4;
+    private final double scaleFactor = 0.5;
     private double xOffset = 0;
     private double yOffset = 0;
 
@@ -580,6 +580,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
+            newComponent.updateRevert(Integer.parseInt(data[12]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getWidthForLoad());
             drawPane.getChildren().add(newComponent);
         }
@@ -588,6 +589,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
+            newComponent.updateRevert(Integer.parseInt(data[14]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
         }
@@ -596,6 +598,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
+            newComponent.updateRevert(Integer.parseInt(data[13]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
         }
@@ -604,6 +607,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
+            newComponent.updateRevert(Integer.parseInt(data[13]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
 
@@ -622,6 +626,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
+            newComponent.updateRevert(Integer.parseInt(data[15]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
 
@@ -631,6 +636,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
+            newComponent.updateRevert(Integer.parseInt(data[15]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
         }

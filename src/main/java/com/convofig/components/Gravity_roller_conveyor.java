@@ -13,7 +13,9 @@ import java.util.Objects;
 
 public class Gravity_roller_conveyor extends Label {
 
-    private final String H1, H2, P;
+    private String H1;
+    private String H2;
+    private String P;
     private String PolySide;
     private final double Width, Height;
     private final int preScaleWidth, preScaleHeight;
@@ -22,11 +24,12 @@ public class Gravity_roller_conveyor extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
-    private Group group;
+    private int revert = 1;
+    private Group group, textGroup;
     private Rectangle bounds;
     private Rectangle dragBounds;
     private final double scaleFactor;
-    private Text titleText;
+    private Text titleText, textH1, textH2, textP;
 
     public Gravity_roller_conveyor(double scaleFactor, int preScaleWidth, int preScaleHeight, double Width, double Height, String H1, String H2, String P, String title) {
         super();
@@ -48,7 +51,7 @@ public class Gravity_roller_conveyor extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + H1 + "," + H2 + "," + P + "," + title;
+        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + H1 + "," + H2 + "," + P + "," + title + "," + revert;
     }
 
     public double getWidthForLoad() {
@@ -59,10 +62,11 @@ public class Gravity_roller_conveyor extends Label {
         return Height;
     }
 
-    public void mouseEnteredDragZone(){
+    public void mouseEnteredDragZone() {
         dragBounds.setVisible(true);
     }
-    public void mouseExitedDragZone(){
+
+    public void mouseExitedDragZone() {
         dragBounds.setVisible(false);
     }
 
@@ -83,13 +87,52 @@ public class Gravity_roller_conveyor extends Label {
         return excelData;
     }
 
-    public void modifyTitle(String newTitle) {
-        title = newTitle;
-        titleText.setText(newTitle);
+    public void modifyTitle(String newValue) {
+        title = newValue;
+        titleText.setText(newValue);
+    }
+
+    public void modifyH(int NO, String newValue) {
+        if (NO == 1) {
+            H1 = newValue;
+            textH1.setText("H1 = " + newValue);
+        } else {
+            H2 = newValue;
+            textH2.setText("H2 = " + newValue);
+        }
+    }
+
+    public void modifyP(String newValue){
+        P = newValue;
+        textP.setText("P = "+newValue);
+    }
+
+    public void revertComponent() {
+        revert = -revert;
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
+    }
+
+    public void updateRevert(int revert) {
+        this.revert = revert;
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
     }
 
     public String getCurrentName() {
         return title;
+    }
+
+    public String getCurrentH(int NO) {
+        if (NO == 1) {
+            return H1;
+        } else {
+            return H2;
+        }
+    }
+
+    public String getCurrentP() {
+        return P;
     }
 
     private void createComponent() {
@@ -119,33 +162,35 @@ public class Gravity_roller_conveyor extends Label {
         botLine.setStroke(Color.WHITE);
         group.getChildren().add(botLine);
 
-        group.getChildren().add(drawRectangle(10, 35 , 40, preScaleHeight));
-        group.getChildren().add(drawRectangle(70, 35 , 40, preScaleHeight));
+        group.getChildren().add(drawRectangle(10, 35, 40, preScaleHeight));
+        group.getChildren().add(drawRectangle(70, 35, 40, preScaleHeight));
 
+        textGroup = new Group();
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
         titleText.setStyle("-fx-font: 16 arial;");
         titleText.setX(140 * scaleFactor); // Adjust the X position based on your requirement
         titleText.setY(Height / 2 - 30 * scaleFactor); // Adjust the Y position based on your requirement
-        group.getChildren().add(titleText);
+        textGroup.getChildren().add(titleText);
 
-        Text textH = new Text("H1 = " + H1);
-        textH.setFill(Color.LIGHTGREEN);
-        textH.setStyle("-fx-font: 10 arial;");
-        textH.relocate(140 * scaleFactor, Height / 2 + 10 * scaleFactor);
-        group.getChildren().add(textH);
+        textH1 = new Text("H1 = " + H1);
+        textH1.setFill(Color.LIGHTGREEN);
+        textH1.setStyle("-fx-font: 12 arial;");
+        textH1.relocate(140 * scaleFactor, Height / 2 + 20 * scaleFactor);
+        textGroup.getChildren().add(textH1);
 
-        Text textV = new Text("H2 = " + H2);
-        textV.setFill(Color.LIGHTGREEN);
-        textV.setStyle("-fx-font: 10 arial;");
-        textV.relocate(140 * scaleFactor, Height / 2 + 45 * scaleFactor);
-        group.getChildren().add(textV);
+        textH2 = new Text("H2 = " + H2);
+        textH2.setFill(Color.LIGHTGREEN);
+        textH2.setStyle("-fx-font: 12 arial;");
+        textH2.relocate(140 * scaleFactor, Height / 2 + 55 * scaleFactor);
+        textGroup.getChildren().add(textH2);
 
-        Text textP = new Text("P = " + P);
+        textP = new Text("P = " + P);
         textP.setFill(Color.CYAN);
-        textP.setStyle("-fx-font: 10 arial;");
-        textP.relocate(140 * scaleFactor, Height / 2 + 80 * scaleFactor);
-        group.getChildren().add(textP);
+        textP.setStyle("-fx-font: 12 arial;");
+        textP.relocate(140 * scaleFactor, Height / 2 + 90 * scaleFactor);
+        textGroup.getChildren().add(textP);
+        group.getChildren().add(textGroup);
 
         dragBounds = new Rectangle(Width / 2 - 100 * scaleFactor, Height / 2 - 100 * scaleFactor, 200 * scaleFactor, 200 * scaleFactor);
         dragBounds.setFill(Color.rgb(127, 255, 212, 0.25));
@@ -153,6 +198,8 @@ public class Gravity_roller_conveyor extends Label {
         dragBounds.setVisible(false);
         group.getChildren().add(dragBounds);
 
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
         setGraphic(group);
     }
 
@@ -161,7 +208,7 @@ public class Gravity_roller_conveyor extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-
+        copy.updateRevert(revert);
         return copy;
     }
 

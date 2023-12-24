@@ -14,9 +14,11 @@ import java.util.Objects;
 
 public class Skew_roller_conveyor extends Label {
 
-    private final String H, V, P;
+    private String H;
+    private String V;
+    private String P;
     private String No_MDR;
-    private final String PolySide;
+    private String PolySide;
     private final double Width, Height;
     private int skewRotation;
     private int skewFactor;
@@ -26,12 +28,13 @@ public class Skew_roller_conveyor extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
+    private int revert = 1;
     private Rectangle bounds;
     private Rectangle dragBounds;
-    private Group group;
+    private Group group, textGroup;
     private final double scaleFactor;
     private double revertMove;
-    private Text titleText;
+    private Text titleText, textH, textV, textP;
     private final String control;
 
     public Skew_roller_conveyor(double scaleFactor, int preScaleWidth, int preScaleHeight, double Width, double Height, String H, String V, String P, String title, String control, String PolySide) {
@@ -100,7 +103,7 @@ public class Skew_roller_conveyor extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + H + "," + V + "," + P + "," + title + "," + control + "," + PolySide;
+        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + H + "," + V + "," + P + "," + title + "," + control + "," + PolySide + "," + revert;
     }
 
     public double getWidthForLoad() {
@@ -148,8 +151,58 @@ public class Skew_roller_conveyor extends Label {
         titleText.setText(newTitle);
     }
 
+    public void modifyH(String newValue) {
+        H = newValue;
+        textH.setText("H = " + newValue);
+    }
+
+    public void modifyV(String newValue) {
+        V = newValue;
+        textV.setText("V = " + newValue);
+    }
+
+    public void modifyP(String newValue) {
+        P = newValue;
+        textP.setText("P = " + newValue);
+    }
+
+    public void revertComponent() {
+        revert = -revert;
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
+    }
+
+    public void updateRevert(int revert) {
+        this.revert = revert;
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
+    }
+
+    public void changeSide() {
+        group.getChildren().clear();
+        if (Objects.equals(PolySide, "Left")) {
+            PolySide = "Right";
+        } else
+            PolySide = "Left";
+        createComponent();
+        populateData();
+        updateRotation();
+    }
+
     public String getCurrentName() {
         return title;
+    }
+
+    public String getCurrentH() {
+        return H;
+    }
+
+    public String getCurrentV() {
+        return V;
+    }
+
+    public String getCurrentP() {
+        return P;
     }
 
     private void createComponent() {
@@ -189,30 +242,32 @@ public class Skew_roller_conveyor extends Label {
         botLine.setStroke(Color.WHITE);
         group.getChildren().add(botLine);
 
+        textGroup = new Group();
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
         titleText.setStyle("-fx-font: 16 arial;");
         titleText.setX(240 * scaleFactor); // Adjust the X position based on your requirement
         titleText.setY(Height / 2 - 30 * scaleFactor); // Adjust the Y position based on your requirement
-        group.getChildren().add(titleText);
+        textGroup.getChildren().add(titleText);
 
-        Text textH = new Text("H = " + H);
+        textH = new Text("H = " + H);
         textH.setFill(Color.LIGHTGREEN);
-        textH.setStyle("-fx-font: 10 arial;");
-        textH.relocate(240 * scaleFactor, Height / 2 + 10 * scaleFactor);
-        group.getChildren().add(textH);
+        textH.setStyle("-fx-font: 12 arial;");
+        textH.relocate(240 * scaleFactor, Height / 2 + 20 * scaleFactor);
+        textGroup.getChildren().add(textH);
 
-        Text textV = new Text("V = " + V);
-        textV.setFill(Color.BLUE);
-        textV.setStyle("-fx-font: 10 arial;");
-        textV.relocate(240 * scaleFactor, Height / 2 + 45 * scaleFactor);
-        group.getChildren().add(textV);
+        textV = new Text("V = " + V);
+        textV.setFill(Color.DEEPSKYBLUE);
+        textV.setStyle("-fx-font: 12 arial;");
+        textV.relocate(240 * scaleFactor, Height / 2 + 55 * scaleFactor);
+        textGroup.getChildren().add(textV);
 
-        Text textP = new Text("P = " + P);
+        textP = new Text("P = " + P);
         textP.setFill(Color.CYAN);
-        textP.setStyle("-fx-font: 10 arial;");
-        textP.relocate(240 * scaleFactor, Height / 2 + 80 * scaleFactor);
-        group.getChildren().add(textP);
+        textP.setStyle("-fx-font: 12 arial;");
+        textP.relocate(240 * scaleFactor, Height / 2 + 90 * scaleFactor);
+        textGroup.getChildren().add(textP);
+        group.getChildren().add(textGroup);
 
         dragBounds = new Rectangle(Width / 2 - 100 * scaleFactor, Height / 2 - 100 * scaleFactor, 200 * scaleFactor, 200 * scaleFactor);
         dragBounds.setFill(Color.rgb(127, 255, 212, 0.25));
@@ -220,6 +275,8 @@ public class Skew_roller_conveyor extends Label {
         dragBounds.setVisible(false);
         group.getChildren().add(dragBounds);
 
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
         setGraphic(group);
     }
 
@@ -228,7 +285,7 @@ public class Skew_roller_conveyor extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-
+        copy.updateRevert(revert);
         return copy;
     }
 

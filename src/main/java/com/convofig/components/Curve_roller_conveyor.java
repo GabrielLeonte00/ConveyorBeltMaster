@@ -13,7 +13,9 @@ import java.util.Objects;
 
 public class Curve_roller_conveyor extends Label {
 
-    private final String H, V, P;
+    private String H;
+    private String V;
+    private final String P;
     private final double Width;
     private final double preWidth;
     private String title;
@@ -22,11 +24,12 @@ public class Curve_roller_conveyor extends Label {
     private final String angle;
     private final String[] excelData;
     private int rotation = 0;
+    private int revert = 1;
     private Rectangle bounds;
     private Rectangle dragBounds;
-    private Group group;
+    private Group group, textGroup;
     private final double scaleFactor;
-    private Text titleText;
+    private Text titleText, textH, textV;
     private final String control;
 
     public Curve_roller_conveyor(double scaleFactor, double w, double pW, String H, String V, String title, String angle, String control) {
@@ -68,7 +71,7 @@ public class Curve_roller_conveyor extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preWidth + "," + Width + "," + H + "," + V + "," + title + "," + angle + "," + control;
+        return rotation + "," + scaleFactor + "," + preWidth + "," + Width + "," + H + "," + V + "," + title + "," + angle + "," + control + "," + revert;
     }
 
     public double getWidthForLoad() {
@@ -87,14 +90,44 @@ public class Curve_roller_conveyor extends Label {
         return excelData;
     }
 
-    public void modifyTitle(String newTitle) {
-        title = newTitle;
-        titleText.setText(newTitle);
+    public void modifyTitle(String newValue) {
+        title = newValue;
+        titleText.setText(newValue);
+    }
+
+    public void modifyH(String newValue) {
+        H = newValue;
+        textH.setText("H = " + newValue);
+    }
+
+    public void modifyV(String newValue) {
+        V = newValue;
+        textV.setText("V = " + newValue);
+    }
+
+    public void revertComponent() {
+        revert = -revert;
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
+    }
+
+    public void updateRevert(int revert) {
+        this.revert = revert;
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
     }
 
     public String getCurrentName() {
         return title;
     }
+    public String getCurrentH() {
+        return H;
+    }
+
+    public String getCurrentV() {
+        return V;
+    }
+
 
     private void createComponent() {
 
@@ -174,38 +207,40 @@ public class Curve_roller_conveyor extends Label {
         topLine.setStroke(Color.WHITE);
         group.getChildren().add(topLine);
 
+        textGroup = new Group();
         double textPosition = (Width - 790 * scaleFactor) / 2 + 30 * scaleFactor;
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
         titleText.setStyle("-fx-font: 16 arial;");
         titleText.setX(textPosition); // Adjust the X position based on your requirement
         titleText.setY(Width - 25 * scaleFactor); // Adjust the Y position based on your requirement
-        group.getChildren().add(titleText);
+        textGroup.getChildren().add(titleText);
 
-        Text textH = new Text("H = " + H);
+        textH = new Text("H = " + H);
         textH.setFill(Color.LIGHTGREEN);
-        textH.setStyle("-fx-font: 10 arial;");
-        textH.relocate(textPosition, Width - 25 * scaleFactor - (45 + 3 * 35) * scaleFactor);
-        group.getChildren().add(textH);
+        textH.setStyle("-fx-font: 12 arial;");
+        textH.relocate(textPosition, Width - 25 * scaleFactor - (55 + 3 * 35) * scaleFactor);
+        textGroup.getChildren().add(textH);
 
-        Text textV = new Text("V = " + V);
-        textV.setFill(Color.BLUE);
-        textV.setStyle("-fx-font: 10 arial;");
-        textV.relocate(textPosition, Width - 25 * scaleFactor - (45 + 2 * 35) * scaleFactor);
-        group.getChildren().add(textV);
+        textV = new Text("V = " + V);
+        textV.setFill(Color.DEEPSKYBLUE);
+        textV.setStyle("-fx-font: 12 arial;");
+        textV.relocate(textPosition, Width - 25 * scaleFactor - (55 + 2 * 35) * scaleFactor);
+        textGroup.getChildren().add(textV);
 
         Text textP = new Text("P = " + P);
         textP.setFill(Color.CYAN);
-        textP.setStyle("-fx-font: 10 arial;");
-        textP.relocate(textPosition, Width - 25 * scaleFactor - (45 + 35) * scaleFactor);
-        group.getChildren().add(textP);
+        textP.setStyle("-fx-font: 12 arial;");
+        textP.relocate(textPosition, Width - 25 * scaleFactor - (55 + 35) * scaleFactor);
+        textGroup.getChildren().add(textP);
 
         dragBounds = new Rectangle(Width / 2 - 100 * scaleFactor, Width / 2 - 100 * scaleFactor, 200 * scaleFactor, 200 * scaleFactor);
         dragBounds.setFill(Color.rgb(127, 255, 212, 0.25));
         dragBounds.setStroke(Color.rgb(127, 255, 212, 0.5));
         dragBounds.setVisible(false);
-        group.getChildren().add(dragBounds);
 
+        group.getChildren().add(textGroup);
+        group.getChildren().add(dragBounds);
         setGraphic(group);
     }
 
@@ -214,7 +249,7 @@ public class Curve_roller_conveyor extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-
+        copy.updateRevert(revert);
         return copy;
     }
 
@@ -223,9 +258,10 @@ public class Curve_roller_conveyor extends Label {
         updateRotation();
     }
 
-    public void resetRotation() {
+    public void resetComponent() {
         rotation = 0;
         updateRotation();
+        updateRevert(1);
     }
 
     private void updateRotation() {

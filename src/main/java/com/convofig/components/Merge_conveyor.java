@@ -11,11 +11,13 @@ import java.util.Objects;
 
 public class Merge_conveyor extends Label {
 
-    private final String H, V, P;
+    private String H;
+    private String V;
+    private String P;
     private final String No_MDR;
     private String PolySide;
     private final double Height;
-    private double Width, lesserWidth, lesserX, lesserMiddleX;
+    private double Width, lesserWidth;
     private final int preScaleHeight;
     private int preScaleWidth;
     private String title;
@@ -23,12 +25,13 @@ public class Merge_conveyor extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
+    private int revert = 1;
     private final double scaleFactor;
-    private Text titleText;
+    private Text titleText, textH, textV, textP;
     private final String control;
     private Rectangle bounds;
     private Rectangle dragBounds;
-    private Group group;
+    private Group group, textGroup;
 
     public Merge_conveyor(double scaleFactor, int preScaleHeight, double Height, String PolySide, String H, String V, String P, String title, String control) {
         super();
@@ -45,43 +48,31 @@ public class Merge_conveyor extends Label {
                 preScaleWidth = 988;
                 lesserWidth = 205 * scaleFactor;
                 Width = preScaleWidth * scaleFactor;
-                lesserX = 134;
-                lesserMiddleX = 265;
                 break;
             case 517:
                 preScaleWidth = 1169;
                 lesserWidth = 213 * scaleFactor;
                 Width = preScaleWidth * scaleFactor;
-                lesserX = 136;
-                lesserMiddleX = 302;
                 break;
             case 617:
                 preScaleWidth = 1349;
                 lesserWidth = 219 * scaleFactor;
                 Width = preScaleWidth * scaleFactor;
-                lesserX = 138;
-                lesserMiddleX = 339;
                 break;
             case 717:
                 preScaleWidth = 1529;
                 lesserWidth = 226 * scaleFactor;
                 Width = preScaleWidth * scaleFactor;
-                lesserX = 141;
-                lesserMiddleX = 376;
                 break;
             case 817:
                 preScaleWidth = 1709;
                 lesserWidth = 233 * scaleFactor;
                 Width = preScaleWidth * scaleFactor;
-                lesserX = 144;
-                lesserMiddleX = 414;
                 break;
             case 917:
                 preScaleWidth = 1889;
                 lesserWidth = 240 * scaleFactor;
                 Width = preScaleWidth * scaleFactor;
-                lesserX = 146;
-                lesserMiddleX = 451;
                 break;
         }
         //
@@ -96,7 +87,7 @@ public class Merge_conveyor extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preScaleHeight + "," + Height + "," + PolySide + "," + H + "," + V + "," + P + "," + title + "," + control;
+        return rotation + "," + scaleFactor + "," + preScaleHeight + "," + Height + "," + PolySide + "," + H + "," + V + "," + P + "," + title + "," + control + "," + revert;
     }
 
     public double getWidthForLoad() {
@@ -144,6 +135,33 @@ public class Merge_conveyor extends Label {
         titleText.setText(newTitle);
     }
 
+    public void modifyH(String newValue) {
+        H = newValue;
+        textH.setText("H = " + newValue);
+    }
+
+    public void modifyV(String newValue) {
+        V = newValue;
+        textV.setText("V = " + newValue);
+    }
+
+    public void modifyP(String newValue) {
+        P = newValue;
+        textP.setText("P = " + newValue);
+    }
+
+    public void revertComponent() {
+        revert = -revert;
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
+    }
+
+    public void updateRevert(int revert) {
+        this.revert = revert;
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
+    }
+
     public void changeSide() {
         group.getChildren().clear();
         if (Objects.equals(PolySide, "Left")) {
@@ -157,6 +175,18 @@ public class Merge_conveyor extends Label {
 
     public String getCurrentName() {
         return title;
+    }
+
+    public String getCurrentH() {
+        return H;
+    }
+
+    public String getCurrentV() {
+        return V;
+    }
+
+    public String getCurrentP() {
+        return P;
     }
 
     private void createComponent() {
@@ -236,30 +266,32 @@ public class Merge_conveyor extends Label {
         middleLine.setStroke(Color.RED);
         group.getChildren().add(middleLine);
 
+        textGroup = new Group();
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
         titleText.setStyle("-fx-font: 16 arial;");
         titleText.setX(165 * scaleFactor); // Adjust the X position based on your requirement
         titleText.setY(Height / 2 - 30 * scaleFactor); // Adjust the Y position based on your requirement
-        group.getChildren().add(titleText);
+        textGroup.getChildren().add(titleText);
 
-        Text textH = new Text("H = " + H);
+        textH = new Text("H = " + H);
         textH.setFill(Color.LIGHTGREEN);
-        textH.setStyle("-fx-font: 10 arial;");
-        textH.relocate(165 * scaleFactor, Height / 2 + 10 * scaleFactor);
-        group.getChildren().add(textH);
+        textH.setStyle("-fx-font: 12 arial;");
+        textH.relocate(165 * scaleFactor, Height / 2 + 20 * scaleFactor);
+        textGroup.getChildren().add(textH);
 
-        Text textV = new Text("V = " + V);
-        textV.setFill(Color.BLUE);
-        textV.setStyle("-fx-font: 10 arial;");
-        textV.relocate(165 * scaleFactor, Height / 2 + 45 * scaleFactor);
-        group.getChildren().add(textV);
+        textV = new Text("V = " + V);
+        textV.setFill(Color.DEEPSKYBLUE);
+        textV.setStyle("-fx-font: 12 arial;");
+        textV.relocate(165 * scaleFactor, Height / 2 + 55 * scaleFactor);
+        textGroup.getChildren().add(textV);
 
-        Text textP = new Text("P = " + P);
+        textP = new Text("P = " + P);
         textP.setFill(Color.CYAN);
-        textP.setStyle("-fx-font: 10 arial;");
-        textP.relocate(165 * scaleFactor, Height / 2 + 80 * scaleFactor);
-        group.getChildren().add(textP);
+        textP.setStyle("-fx-font: 12 arial;");
+        textP.relocate(165 * scaleFactor, Height / 2 + 90 * scaleFactor);
+        textGroup.getChildren().add(textP);
+        group.getChildren().add(textGroup);
 
         dragBounds = new Rectangle(Width / 2 - 100 * scaleFactor, Height / 2 - 100 * scaleFactor, 200 * scaleFactor, 200 * scaleFactor);
         dragBounds.setFill(Color.rgb(127, 255, 212, 0.25));
@@ -267,6 +299,8 @@ public class Merge_conveyor extends Label {
         dragBounds.setVisible(false);
         group.getChildren().add(dragBounds);
 
+        textGroup.setScaleX(revert);
+        group.setScaleX(revert);
         setGraphic(group);
     }
 
@@ -275,7 +309,7 @@ public class Merge_conveyor extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-
+        copy.updateRevert(revert);
         return copy;
     }
 

@@ -13,7 +13,9 @@ import java.util.Objects;
 
 public class Motorized_roller_conveyor extends Label {
 
-    private final String H, V, P;
+    private String H;
+    private String V;
+    private String P;
     private final String No_MDR;
     private String PolySide;
     private final double Width, Height;
@@ -23,7 +25,7 @@ public class Motorized_roller_conveyor extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
-    private int revert;
+    private int revert = 1;
     private final double scaleFactor;
     private Text titleText, textH, textV, textP;
     private final String control;
@@ -45,7 +47,6 @@ public class Motorized_roller_conveyor extends Label {
         this.control = control;
         this.preScaleHeight = preScaleHeight;
         this.preScaleWidth = preScaleWidth;
-        this.revert = 1;
         Component_name = "Motorized roller conveyor";
         Type_code = "G5301A";
         excelData = new String[22];
@@ -103,6 +104,21 @@ public class Motorized_roller_conveyor extends Label {
         titleText.setText(newTitle);
     }
 
+    public void modifyH(String newValue) {
+        H = newValue;
+        textH.setText("H = " + newValue);
+    }
+
+    public void modifyV(String newValue) {
+        V = newValue;
+        textV.setText("V = " + newValue);
+    }
+
+    public void modifyP(String newValue) {
+        P = newValue;
+        textP.setText("P = " + newValue);
+    }
+
     public void revertComponent() {
         revert = -revert;
         textGroup.setScaleX(revert);
@@ -128,6 +144,18 @@ public class Motorized_roller_conveyor extends Label {
 
     public String getCurrentName() {
         return title;
+    }
+
+    public String getCurrentH() {
+        return H;
+    }
+
+    public String getCurrentV() {
+        return V;
+    }
+
+    public String getCurrentP() {
+        return P;
     }
 
     private void createComponent() {
@@ -178,20 +206,20 @@ public class Motorized_roller_conveyor extends Label {
 
         textH = new Text("H = " + H);
         textH.setFill(Color.LIGHTGREEN);
-        textH.setStyle("-fx-font: 10 arial;");
-        textH.relocate(120 * scaleFactor, Height / 2 + 10 * scaleFactor);
+        textH.setStyle("-fx-font: 12 arial;");
+        textH.relocate(120 * scaleFactor, Height / 2 + 20 * scaleFactor);
         textGroup.getChildren().add(textH);
 
         textV = new Text("V = " + V);
-        textV.setFill(Color.BLUE);
-        textV.setStyle("-fx-font: 10 arial;");
-        textV.relocate(120 * scaleFactor, Height / 2 + 45 * scaleFactor);
+        textV.setFill(Color.DEEPSKYBLUE);
+        textV.setStyle("-fx-font: 12 arial;");
+        textV.relocate(120 * scaleFactor, Height / 2 + 55 * scaleFactor);
         textGroup.getChildren().add(textV);
 
         textP = new Text("P = " + P);
         textP.setFill(Color.CYAN);
-        textP.setStyle("-fx-font: 10 arial;");
-        textP.relocate(120 * scaleFactor, Height / 2 + 80 * scaleFactor);
+        textP.setStyle("-fx-font: 12 arial;");
+        textP.relocate(120 * scaleFactor, Height / 2 + 90 * scaleFactor);
         textGroup.getChildren().add(textP);
         group.getChildren().add(textGroup);
 
@@ -220,9 +248,10 @@ public class Motorized_roller_conveyor extends Label {
         updateRotation();
     }
 
-    public void resetRotation() {
+    public void resetComponent() {
         rotation = 0;
         updateRotation();
+        updateRevert(1);
     }
 
     private void updateRotation() {
