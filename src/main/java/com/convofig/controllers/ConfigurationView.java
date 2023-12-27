@@ -7,7 +7,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.StageStyle;
-import javafx.util.converter.IntegerStringConverter;
 
 import java.util.Arrays;
 import java.util.List;

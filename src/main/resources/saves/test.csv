@@ -1,4 +1,8 @@
 0.0,0.0
-Merge_conveyor,2372.0,1039.0,0,0.4,417,194.8,Right,fasfa,fsafa,90,A0010,EQube AI,1
-Curve_roller_conveyor,2336.0,1269.0,0,0.4,417.0,510.8,fsafs,fsafs,A0010,90,EQube AI,1
-Skew_roller_conveyor,1650.0,1476.0,0,0.4,1440,417,576.0,194.8,asfaf,fsafa,90,A0010,EQube AI,Right,1
+Motorized_roller_conveyor,2137.0,1054.0,0,0.5,360,417,180.0,243.5,Right,1,700,30,60,A0010,EQube AI,1
+Gravity_roller_conveyor,2389.0,1043.0,0,0.5,540,417,270.0,243.5,700,700,60,A0010,1
+Transfer_module_90_degree,2459.0,1433.0,0,0.5,780,717,390.0,393.5,700,30,0,60,A0010,EQube AI,-1
+Merge_conveyor,1229.0,1447.0,0,0.5,717,393.5,Right,700,30,60,A0010,EQube AI,1
+Curve_roller_conveyor,2050.0,1278.0,0,0.5,417.0,638.5,700,30,A0010,45,EQube AI,1
+Skew_roller_conveyor,1562.0,1319.0,0,0.5,1440,417,720.0,243.5,700,30,60,A0010,EQube AI,Right,1
+Diverter,2743.0,1041.0,0,0.5,720,417,360.0,243.5,Right,700,30,30,A0010,1

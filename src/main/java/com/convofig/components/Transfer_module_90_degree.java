@@ -5,13 +5,12 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 public class Transfer_module_90_degree extends Label {
 
