@@ -29,7 +29,7 @@ public class Curve_roller_conveyor extends Label {
     private Rectangle dragBounds;
     private Group group, textGroup;
     private final double scaleFactor;
-    private Text titleText, textH, textV;
+    private Text titleText, textH, textV, textP;
     private final String control;
 
     public Curve_roller_conveyor(double scaleFactor, double w, double pW, String H, String V, String title, String angle, String control) {
@@ -105,21 +105,28 @@ public class Curve_roller_conveyor extends Label {
         textV.setText("V = " + newValue);
     }
 
-    public void revertComponent() {
+    public void mirrorText() {
         revert = -revert;
         textGroup.setScaleX(revert);
-        group.setScaleX(revert);
+        titleText.setScaleY(revert);
+        textH.setScaleY(revert);
+        textV.setScaleY(revert);
+        textP.setScaleY(revert);
     }
 
-    public void updateRevert(int revert) {
+    public void updateMirrorText(int revert) {
         this.revert = revert;
         textGroup.setScaleX(revert);
-        group.setScaleX(revert);
+        titleText.setScaleY(revert);
+        textH.setScaleY(revert);
+        textV.setScaleY(revert);
+        textP.setScaleY(revert);
     }
 
     public String getCurrentName() {
         return title;
     }
+
     public String getCurrentH() {
         return H;
     }
@@ -228,7 +235,7 @@ public class Curve_roller_conveyor extends Label {
         textV.relocate(textPosition, Width - 25 * scaleFactor - (55 + 2 * 35) * scaleFactor);
         textGroup.getChildren().add(textV);
 
-        Text textP = new Text("P = " + P);
+        textP = new Text("P = " + P);
         textP.setFill(Color.CYAN);
         textP.setStyle("-fx-font: 12 arial;");
         textP.relocate(textPosition, Width - 25 * scaleFactor - (55 + 35) * scaleFactor);
@@ -249,7 +256,7 @@ public class Curve_roller_conveyor extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-        copy.updateRevert(revert);
+        copy.updateMirrorText(revert);
         return copy;
     }
 
@@ -261,7 +268,7 @@ public class Curve_roller_conveyor extends Label {
     public void resetComponent() {
         rotation = 0;
         updateRotation();
-        updateRevert(1);
+        updateMirrorText(1);
     }
 
     private void updateRotation() {

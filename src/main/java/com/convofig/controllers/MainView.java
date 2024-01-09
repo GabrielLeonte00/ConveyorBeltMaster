@@ -79,6 +79,8 @@ public class MainView extends MainApplication {
     @FXML
     private ComboBox<String> componentSkewLengthComboBox;
     @FXML
+    private ComboBox<String> componentDivDirectionComboBox;
+    @FXML
     private MenuItem zoomInMI;
     @FXML
     private MenuItem zoomOutMI;
@@ -116,11 +118,12 @@ public class MainView extends MainApplication {
     private Label labelHeight;
     @FXML
     private Label labelControl;
+    @FXML
+    private Label labelDivDirection;
 
     @FXML
     public void initialize() {
-        new ConfigurationView(scaleFactor, mainPane, drawPane, componentRegion, componentTypeComboBox, componentWidthComboBox, componentLengthComboBox, componentSkewLengthComboBox, componentRollerPitchComboBox, componentPolyVeeSideComboBox, componentNoOfMDRComboBox, textTitle, textSpeed1, textSpeed2, textHeight, textAuxHeight, componentAngleComboBox, componentControlComboBox, componentDiverterLengthComboBox, componentDivertingAngleComboBox);
-        exportExcel dataExcel = new exportExcel(drawPane);
+        new ConfigurationView(scaleFactor, mainPane, drawPane, componentRegion, componentTypeComboBox, componentWidthComboBox, componentLengthComboBox, componentSkewLengthComboBox, componentRollerPitchComboBox, componentPolyVeeSideComboBox, componentNoOfMDRComboBox, textTitle, textSpeed1, textSpeed2, textHeight, textAuxHeight, componentAngleComboBox, componentControlComboBox, componentDiverterLengthComboBox, componentDivertingAngleComboBox, componentDivDirectionComboBox);
         addMovingDrawingPane();
         getOffsetsForMove();
     }
@@ -178,8 +181,10 @@ public class MainView extends MainApplication {
         componentSkewLengthComboBox.getSelectionModel().select(0);
         componentRollerPitchComboBox.getItems().addAll("60", "90", "120");
         componentRollerPitchComboBox.getSelectionModel().select(0);
-        componentPolyVeeSideComboBox.getItems().addAll("Left", "Right");
-        componentPolyVeeSideComboBox.getSelectionModel().select(1);
+        componentPolyVeeSideComboBox.getItems().addAll("Right", "Left");
+        componentPolyVeeSideComboBox.getSelectionModel().select(0);
+        componentDivDirectionComboBox.getItems().addAll("Right", "Left", "Right/Left");
+        componentDivDirectionComboBox.getSelectionModel().select(2);
         componentNoOfMDRComboBox.getItems().addAll("1", "2", "3", "4");
         componentNoOfMDRComboBox.getSelectionModel().select(0);
         componentAngleComboBox.getItems().addAll("30", "45", "60", "90");
@@ -303,7 +308,7 @@ public class MainView extends MainApplication {
             newMethodeUsedOnce = 1;
             addContextMenuDrawPane();
             initializeSelectors();
-            changeAbleConfigurations();
+            changeConfigurations();
             scrollZoom();
         } else {
             if (drawPane.getChildren().isEmpty()) {
@@ -406,7 +411,7 @@ public class MainView extends MainApplication {
 
     void getOffsetsForMove() {
         mainPane.setOnMousePressed(e -> {
-            if (e.isMiddleButtonDown()) {
+            if (e.isPrimaryButtonDown()) {
                 xOffset = e.getSceneX() - drawPane.getLayoutX();
                 yOffset = e.getSceneY() - drawPane.getLayoutY();
             }
@@ -415,7 +420,15 @@ public class MainView extends MainApplication {
 
     void addMovingDrawingPane() {
         drawPane.setOnMouseDragged(e -> {
-            if (e.isMiddleButtonDown()) {
+            if (e.isPrimaryButtonDown()) {
+                Node target = e.getPickResult().getIntersectedNode();
+
+                // Check if the mouse press is not on a component inside drawPane
+                if (target != null && !target.equals(drawPane)) {
+                    // Pressed on a component inside drawPane, do not move drawPane
+                    return;
+                }
+
                 double x = e.getSceneX() - xOffset;
                 double y = e.getScreenY() - yOffset;
                 drawPane.setLayoutX(x);
@@ -580,16 +593,16 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
-            newComponent.updateRevert(Integer.parseInt(data[12]));
+            newComponent.updateMirrorText(Integer.parseInt(data[12]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getWidthForLoad());
             drawPane.getChildren().add(newComponent);
         }
         if (Objects.equals(data[0], "Diverter")) {
-            Diverter newComponent = new Diverter(Double.parseDouble(data[4]), Integer.parseInt(data[5]), Integer.parseInt(data[6]), Double.parseDouble(data[7]), Double.parseDouble(data[8]), data[9], data[10], data[11], data[12], data[13]);
+            Diverter newComponent = new Diverter(Double.parseDouble(data[4]), Integer.parseInt(data[5]), Integer.parseInt(data[6]), Double.parseDouble(data[7]), Double.parseDouble(data[8]), data[9], data[10], data[11], data[12], data[13], data[14]);
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
-            newComponent.updateRevert(Integer.parseInt(data[14]));
+            newComponent.updateRevert(Integer.parseInt(data[15]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
         }
@@ -738,11 +751,11 @@ public class MainView extends MainApplication {
         if (drawPane.getChildren().isEmpty()) {
             System.out.println("Empty");
         } else {
-            exportExcel.startExport();
+            exportExcel.startExport(drawPane);
         }
     }
 
-    void changeAbleConfigurations() {
+    void changeConfigurations() {
         componentTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             int selectedIndex = componentTypeComboBox.getItems().indexOf(newValue);
             switch (selectedIndex) {
@@ -771,6 +784,8 @@ public class MainView extends MainApplication {
                     componentControlComboBox.setDisable(false);
                     componentDivertingAngleComboBox.setVisible(false);
                     componentDiverterLengthComboBox.setVisible(false);
+                    labelDivDirection.setVisible(false);
+                    componentDivDirectionComboBox.setVisible(false);
                     componentRegion.setPrefWidth((Integer.parseInt(componentLengthComboBox.getSelectionModel().getSelectedItem())) * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
@@ -800,6 +815,8 @@ public class MainView extends MainApplication {
                     componentControlComboBox.setDisable(true);
                     componentDivertingAngleComboBox.setVisible(false);
                     componentDiverterLengthComboBox.setVisible(false);
+                    labelDivDirection.setVisible(false);
+                    componentDivDirectionComboBox.setVisible(false);
                     componentRegion.setPrefWidth((Integer.parseInt(componentLengthComboBox.getSelectionModel().getSelectedItem())) * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
@@ -829,6 +846,8 @@ public class MainView extends MainApplication {
                     componentControlComboBox.setDisable(false);
                     componentDivertingAngleComboBox.setVisible(false);
                     componentDiverterLengthComboBox.setVisible(false);
+                    labelDivDirection.setVisible(false);
+                    componentDivDirectionComboBox.setVisible(false);
                     componentRegion.setPrefWidth(780 * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
@@ -857,6 +876,8 @@ public class MainView extends MainApplication {
                     componentControlComboBox.setDisable(false);
                     componentDivertingAngleComboBox.setVisible(false);
                     componentDiverterLengthComboBox.setVisible(false);
+                    labelDivDirection.setVisible(false);
+                    componentDivDirectionComboBox.setVisible(false);
                     switch (componentWidthComboBox.getSelectionModel().getSelectedIndex()) {
                         case 0:
                             componentRegion.setPrefWidth(988 * scaleFactor);
@@ -903,6 +924,8 @@ public class MainView extends MainApplication {
                     componentControlComboBox.setDisable(false);
                     componentDivertingAngleComboBox.setVisible(false);
                     componentDiverterLengthComboBox.setVisible(false);
+                    labelDivDirection.setVisible(false);
+                    componentDivDirectionComboBox.setVisible(false);
                     componentRegion.setPrefWidth((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70 + 790) * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70 + 790) * scaleFactor);
                     break;
@@ -931,6 +954,8 @@ public class MainView extends MainApplication {
                     labelControl.setDisable(false);
                     componentControlComboBox.setDisable(false);
                     componentDiverterLengthComboBox.setVisible(false);
+                    labelDivDirection.setVisible(false);
+                    componentDivDirectionComboBox.setVisible(false);
                     componentRegion.setPrefWidth((Integer.parseInt(componentSkewLengthComboBox.getSelectionModel().getSelectedItem())) * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70) * scaleFactor);
                     break;
@@ -959,6 +984,8 @@ public class MainView extends MainApplication {
                     textAuxHeight.setVisible(false);
                     textSpeed1.setVisible(true);
                     labelControl.setDisable(false);
+                    labelDivDirection.setVisible(true);
+                    componentDivDirectionComboBox.setVisible(true);
                     componentControlComboBox.setDisable(false);
                     componentRegion.setPrefWidth((Integer.parseInt(componentDiverterLengthComboBox.getSelectionModel().getSelectedItem())) * scaleFactor);
                     componentRegion.setPrefHeight((Integer.parseInt(componentWidthComboBox.getSelectionModel().getSelectedItem()) + 70 + 220) * scaleFactor);

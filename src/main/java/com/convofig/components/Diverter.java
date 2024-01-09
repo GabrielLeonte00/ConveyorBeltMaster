@@ -18,6 +18,7 @@ public class Diverter extends Label {
     private String V;
     private String Diverting_Angle;
     private String PolySide;
+    private String Diverting_Direction;
     private final double Width, Height;
     private final int preScaleWidth, preScaleHeight;
     private String title;
@@ -27,12 +28,12 @@ public class Diverter extends Label {
     private int rotation = 0;
     private int revert = 1;
     private final double scaleFactor;
-    private Text titleText, tBox, textH, textV;
+    private Text titleText, tBox, textH, textV, textAngle;
     private Rectangle bounds;
     private Rectangle dragBounds;
     private Group group, textGroup;
 
-    public Diverter(double scaleFactor, int preScaleWidth, int preScaleHeight, double Width, double Height, String PolySide, String H, String V, String Diverting_Angle, String title) {
+    public Diverter(double scaleFactor, int preScaleWidth, int preScaleHeight, double Width, double Height, String PolySide, String H, String V, String Diverting_Angle, String title, String Diverting_Direction) {
         super();
         this.scaleFactor = scaleFactor;
         this.H = H;
@@ -40,6 +41,7 @@ public class Diverter extends Label {
         this.Diverting_Angle = Diverting_Angle;
         this.title = title;
         this.PolySide = PolySide;
+        this.Diverting_Direction = Diverting_Direction;
         this.Height = Height;
         this.Width = Width;
         this.preScaleHeight = preScaleHeight;
@@ -54,7 +56,7 @@ public class Diverter extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + PolySide + "," + H + "," + V + "," + Diverting_Angle + "," + title + "," + revert;
+        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + PolySide + "," + H + "," + V + "," + Diverting_Angle + "," + title + "," + Diverting_Direction + "," + revert;
     }
 
     public double getWidthForLoad() {
@@ -106,7 +108,7 @@ public class Diverter extends Label {
         textV.setText("V = " + newValue);
     }
 
-    public void modifyDiverting_Angle(String newValue){
+    public void modifyDiverting_Angle(String newValue) {
         Diverting_Angle = newValue;
     }
 
@@ -147,7 +149,7 @@ public class Diverter extends Label {
         return V;
     }
 
-    public String getCurrentDiverting_Angle(){
+    public String getCurrentDiverting_Angle() {
         return Diverting_Angle;
     }
 
@@ -185,37 +187,78 @@ public class Diverter extends Label {
 
         prepForCircles(groupDiverter);
 
-        drawArrow(groupDiverter, Height / 2);
-
-        Line middleLine = new Line(0, Height / 2, Width, Height / 2);
-        middleLine.setStroke(Color.RED);
-        groupDiverter.getChildren().add(middleLine);
+        groupDiverter.getChildren().add(drawArrow(100 * scaleFactor, Height / 2));
 
         textGroup = new Group();
+
+        double x = Width / 2;
+
+        switch (preScaleWidth) {
+            case 500:
+                x = Width / 2 - 8 * scaleFactor;
+                break;
+            case 600:
+                x = Width / 2 - 45 * scaleFactor;
+                break;
+            case 720:
+                x = Width / 2 - 93 * scaleFactor;
+                break;
+        }
+
+        Line middleLine1 = new Line(0, Height / 2, x, Height / 2);
+        middleLine1.setStroke(Color.RED);
+        groupDiverter.getChildren().add(middleLine1);
+
+        textAngle = new Text(Diverting_Angle);
+        textAngle.setFill(Color.RED);
+        textAngle.setStyle("-fx-font: 12 arial;");
+        textAngle.relocate(x + 5 * scaleFactor, Height / 2 - 9);
+        textGroup.getChildren().add(textAngle);
+
+        Line middleLine2 = new Line(x + 38 * scaleFactor, Height / 2, Width, Height / 2);
+        middleLine2.setStroke(Color.RED);
+        groupDiverter.getChildren().add(middleLine2);
+
+        Polygon arrowLeft, arrowRight;
+        switch (Diverting_Direction) {
+            case "Right/Left":
+                arrowLeft = drawArrow(100 * scaleFactor, Height / 2 - 60 * scaleFactor);
+                arrowLeft.setRotate(-Integer.parseInt(Diverting_Angle));
+                groupDiverter.getChildren().add(arrowLeft);
+                arrowRight = drawArrow(100 * scaleFactor, Height / 2 + 60 * scaleFactor);
+                arrowRight.setRotate(Integer.parseInt(Diverting_Angle));
+                groupDiverter.getChildren().add(arrowRight);
+                break;
+            case "Right":
+                arrowRight = drawArrow(100 * scaleFactor, Height / 2 + 60 * scaleFactor);
+                arrowRight.setRotate(Integer.parseInt(Diverting_Angle));
+                groupDiverter.getChildren().add(arrowRight);
+                break;
+            case "Left":
+                arrowLeft = drawArrow(100 * scaleFactor, Height / 2 - 60 * scaleFactor);
+                arrowLeft.setRotate(-Integer.parseInt(Diverting_Angle));
+                groupDiverter.getChildren().add(arrowLeft);
+                break;
+        }
+
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
         titleText.setStyle("-fx-font: 16 arial;");
         titleText.setX(100 * scaleFactor); // Adjust the X position based on your requirement
-        titleText.setY(Height / 2 - 30 * scaleFactor); // Adjust the Y position based on your requirement
+        titleText.setY(Height / 2 - 100 * scaleFactor); // Adjust the Y position based on your requirement
         textGroup.getChildren().add(titleText);
 
         textH = new Text("H = " + H);
         textH.setFill(Color.LIGHTGREEN);
         textH.setStyle("-fx-font: 12 arial;");
-        textH.relocate(100 * scaleFactor, Height / 2 + 20 * scaleFactor);
+        textH.relocate(100 * scaleFactor, Height / 2 + 100 * scaleFactor);
         textGroup.getChildren().add(textH);
 
         textV = new Text("V = " + V);
         textV.setFill(Color.DEEPSKYBLUE);
         textV.setStyle("-fx-font: 12 arial;");
-        textV.relocate(100 * scaleFactor, Height / 2 + 55 * scaleFactor);
+        textV.relocate(100 * scaleFactor, Height / 2 + 135 * scaleFactor);
         textGroup.getChildren().add(textV);
-
-        /*Text textP = new Text("P = " + P);
-        textP.setFill(Color.CYAN);
-        textP.setStyle("-fx-font: 12 arial;");
-        textP.relocate(100 * scaleFactor, Height / 2 + 90 * scaleFactor);
-        textGroup.getChildren().add(textP);*/
 
         groupDiverter.getChildren().add(textGroup);
 
@@ -264,7 +307,7 @@ public class Diverter extends Label {
     }
 
     public Diverter copyComponent() {
-        Diverter copy = new Diverter(scaleFactor, preScaleWidth, preScaleHeight, Width, Height, PolySide, H, V, Diverting_Angle, title);
+        Diverter copy = new Diverter(scaleFactor, preScaleWidth, preScaleHeight, Width, Height, PolySide, H, V, Diverting_Angle, title, Diverting_Direction);
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
@@ -289,8 +332,7 @@ public class Diverter extends Label {
         dragBounds.setRotate(-rotation);
     }
 
-    private void drawArrow(Group group, double y) {
-        double x = 100 * scaleFactor;
+    private Polygon drawArrow(double x, double y) {
         double[] arrowPoints = {
                 x, y,
                 x, y - 7 * scaleFactor,
@@ -305,7 +347,7 @@ public class Diverter extends Label {
         Polygon arrow = new Polygon(arrowPoints);
         arrow.setStroke(Color.YELLOW);
         arrow.setFill(Color.TRANSPARENT); // Set to transparent if you don't want to fill the arrow
-        group.getChildren().add(arrow);
+        return arrow;
     }
 
     private void drawCircles(Group group, double startX, double endX, double radius, double distanceX, double distanceY) {

@@ -1,6 +1,7 @@
 package com.convofig.classes;
 
 import com.convofig.components.*;
+import com.convofig.controllers.MainView;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
@@ -15,13 +16,8 @@ import java.io.IOException;
 
 public class exportExcel {
 
-    private static Pane drawPane;
+    public static void startExport(Pane drawPane) {
 
-    public exportExcel(Pane drawPane) {
-        exportExcel.drawPane = drawPane;
-    }
-
-    public static void startExport() {
         Node[] components = drawPane.getChildren().toArray(new Node[0]);
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
