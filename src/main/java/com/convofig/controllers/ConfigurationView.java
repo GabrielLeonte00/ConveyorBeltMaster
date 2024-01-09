@@ -145,7 +145,7 @@ public class ConfigurationView extends MainView {
             double scaleFactorY = mainPane.getLocalToSceneTransform().getMyy();
 
             double adjustedLayoutX = 300 - drawPane.getLayoutX() * scaleFactorX;
-            double adjustedLayoutY = 20 - drawPane.getLayoutY() * scaleFactorY;
+            double adjustedLayoutY = 10 - drawPane.getLayoutY() * scaleFactorY;
 
             // Adjust the layout coordinates based on the scaling factors
             adjustedLayoutX /= scaleFactorX;
@@ -178,9 +178,7 @@ public class ConfigurationView extends MainView {
 
         component.hoverProperty().addListener(e -> dragBoundsVisibleTrue(component));
 
-        component.setOnMouseExited(e -> {
-            dragBoundsVisibleFalse(component);
-        });
+        component.setOnMouseExited(e -> dragBoundsVisibleFalse(component));
 
         component.setOnMousePressed(e -> {
             contextMenu.hide();
@@ -253,6 +251,13 @@ public class ConfigurationView extends MainView {
 
     private static ContextMenu addContextMenu(Node component, double width, double height) {
         ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem copyComponentMenuItem = new MenuItem("Copy");
+        copyComponentMenuItem.setOnAction(event -> copyComponent(component, width, height));
+        contextMenu.getItems().add(copyComponentMenuItem);
+        contextMenu.getItems().add(new SeparatorMenuItem());
+        Menu changeValueMenu = new Menu("Edit");
+        contextMenu.getItems().add(changeValueMenu);
         MenuItem rotateMenuItem = new MenuItem("Rotate");
         rotateMenuItem.setOnAction(event -> showRotateDialog(component));
         contextMenu.getItems().add(rotateMenuItem);
@@ -262,21 +267,20 @@ public class ConfigurationView extends MainView {
         clearRotateMenuItem.setOnAction(event -> clearComponent(component));
         contextMenu.getItems().add(clearRotateMenuItem);
         contextMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem titleComponentMenuItem = new MenuItem("Change title");
-        contextMenu.getItems().add(titleComponentMenuItem);
-        MenuItem changeValue1ComponentMenuItem = new MenuItem("Change H");
-        contextMenu.getItems().add(changeValue1ComponentMenuItem);
-        MenuItem changeValue2ComponentMenuItem = new MenuItem("Change V");
-        contextMenu.getItems().add(changeValue2ComponentMenuItem);
-        MenuItem changeValue3ComponentMenuItem = new MenuItem("Change P");
-        contextMenu.getItems().add(changeValue3ComponentMenuItem);
-        MenuItem sideComponentMenuItem = new MenuItem("Change side");
+        MenuItem titleComponentMenuItem = new MenuItem("Title");
+        changeValueMenu.getItems().add(titleComponentMenuItem);
+        MenuItem changeValue1ComponentMenuItem = new MenuItem("Height(H)");
+        changeValueMenu.getItems().add(changeValue1ComponentMenuItem);
+        MenuItem changeValue2ComponentMenuItem = new MenuItem("Speed(V)");
+        changeValueMenu.getItems().add(changeValue2ComponentMenuItem);
+        MenuItem changeValue3ComponentMenuItem = new MenuItem("Pitch(P)");
+        changeValueMenu.getItems().add(changeValue3ComponentMenuItem);
+        MenuItem changeValue4ComponentMenuItem = new MenuItem("Direction");
+        changeValueMenu.getItems().add(changeValue4ComponentMenuItem);
+        changeValue4ComponentMenuItem.setVisible(false);
+        MenuItem sideComponentMenuItem = new MenuItem("Side");
         sideComponentMenuItem.setVisible(false);
-        contextMenu.getItems().add(sideComponentMenuItem);
-        contextMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem copyComponentMenuItem = new MenuItem("Copy");
-        copyComponentMenuItem.setOnAction(event -> copyComponent(component, width, height));
-        contextMenu.getItems().add(copyComponentMenuItem);
+        changeValueMenu.getItems().add(sideComponentMenuItem);
         MenuItem removeComponentMenuItem = new MenuItem("Remove");
         removeComponentMenuItem.setOnAction(event -> removeComponent(component));
         contextMenu.getItems().add(removeComponentMenuItem);
@@ -284,63 +288,69 @@ public class ConfigurationView extends MainView {
         if (component instanceof Motorized_roller_conveyor) {
             sideComponentMenuItem.setVisible(true);
             sideComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).changeSide());
-            revertMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).revertComponent());
+            revertMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).mirrorText());
             titleComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyTitle(changeComponentValue(7, "Change title", ((Motorized_roller_conveyor) component).getCurrentName())));
             changeValue1ComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Motorized_roller_conveyor) component).getCurrentH())));
             changeValue2ComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Motorized_roller_conveyor) component).getCurrentV())));
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyP(changeComponentPitch(1, ((Motorized_roller_conveyor) component).getCurrentP())));
+            changeValue3ComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyP(changeComponentValue(1, ((Motorized_roller_conveyor) component).getCurrentP())));
         }
         if (component instanceof Curve_roller_conveyor) {
             revertMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).mirrorText());
             titleComponentMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).modifyTitle(changeComponentValue(7, "Change title", ((Curve_roller_conveyor) component).getCurrentName())));
             changeValue1ComponentMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Curve_roller_conveyor) component).getCurrentH())));
             changeValue2ComponentMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Curve_roller_conveyor) component).getCurrentV())));
-            changeValue3ComponentMenuItem.setVisible(false);
+            changeValue3ComponentMenuItem.setText("Angle");
+            changeValue3ComponentMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).modifyAngle(changeComponentValue(4, ((Curve_roller_conveyor) component).getCurrentAngle())));
+            sideComponentMenuItem.setVisible(true);
+            sideComponentMenuItem.setText("Direction");
+            sideComponentMenuItem.setOnAction((event -> ((Curve_roller_conveyor) component).revert()));
         }
         if (component instanceof Diverter) {
             sideComponentMenuItem.setVisible(true);
             sideComponentMenuItem.setOnAction(event -> ((Diverter) component).changeSide());
-            revertMenuItem.setOnAction(event -> ((Diverter) component).revertComponent());
+            revertMenuItem.setOnAction(event -> ((Diverter) component).mirrorText());
             titleComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyTitle(changeComponentValue(7, "Change title", ((Diverter) component).getCurrentName())));
             changeValue1ComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyH(changeComponentValue(5, "Change H", ((Diverter) component).getCurrentH())));
             changeValue2ComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyV(changeComponentValue(5, "Change V", ((Diverter) component).getCurrentV())));
-            changeValue3ComponentMenuItem.setText("Change angle");
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyDiverting_Angle(changeComponentPitch(2, ((Diverter) component).getCurrentDiverting_Angle())));
+            changeValue3ComponentMenuItem.setText("Angle");
+            changeValue3ComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyDiverting_Angle(changeComponentValue(2, ((Diverter) component).getCurrentDiverting_Angle())));
+            changeValue4ComponentMenuItem.setVisible(true);
+            changeValue4ComponentMenuItem.setOnAction(event -> ((Diverter) component).changeDirection(changeComponentValue(3, ((Diverter) component).getCurrentDirection())));
         }
         if (component instanceof Gravity_roller_conveyor) {
-            revertMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).revertComponent());
+            revertMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).mirrorText());
             titleComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyTitle(changeComponentValue(7, "Change title", ((Gravity_roller_conveyor) component).getCurrentName())));
-            changeValue1ComponentMenuItem.setText("Change H1");
+            changeValue1ComponentMenuItem.setText("Height(H1)");
             changeValue1ComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyH(1, changeComponentValue(5, "Change H1", ((Gravity_roller_conveyor) component).getCurrentH(1))));
-            changeValue2ComponentMenuItem.setText("Change H2");
+            changeValue2ComponentMenuItem.setText("Height(H2)");
             changeValue2ComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyH(2, changeComponentValue(5, "Change H2", ((Gravity_roller_conveyor) component).getCurrentH(2))));
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyP(changeComponentPitch(1, ((Gravity_roller_conveyor) component).getCurrentP())));
+            changeValue3ComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyP(changeComponentValue(1, ((Gravity_roller_conveyor) component).getCurrentP())));
         }
         if (component instanceof Merge_conveyor) {
             sideComponentMenuItem.setVisible(true);
             sideComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).changeSide());
-            revertMenuItem.setOnAction(event -> ((Merge_conveyor) component).revertComponent());
+            revertMenuItem.setOnAction(event -> ((Merge_conveyor) component).mirrorText());
             titleComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyTitle(changeComponentValue(7, "Change title", ((Merge_conveyor) component).getCurrentName())));
             changeValue1ComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Merge_conveyor) component).getCurrentH())));
             changeValue2ComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Merge_conveyor) component).getCurrentV())));
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyP(changeComponentPitch(1, ((Merge_conveyor) component).getCurrentP())));
+            changeValue3ComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyP(changeComponentValue(1, ((Merge_conveyor) component).getCurrentP())));
         }
         if (component instanceof Skew_roller_conveyor) {
             sideComponentMenuItem.setVisible(true);
             sideComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).changeSide());
-            revertMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).revertComponent());
+            revertMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).mirrorText());
             titleComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyTitle(changeComponentValue(7, "Change title", ((Skew_roller_conveyor) component).getCurrentName())));
             changeValue1ComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Skew_roller_conveyor) component).getCurrentH())));
             changeValue2ComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Skew_roller_conveyor) component).getCurrentV())));
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyP(changeComponentPitch(1, ((Skew_roller_conveyor) component).getCurrentP())));
+            changeValue3ComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyP(changeComponentValue(1, ((Skew_roller_conveyor) component).getCurrentP())));
         }
         if (component instanceof Transfer_module_90_degree) {
-            revertMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).revertComponent());
+            revertMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).mirrorText());
             titleComponentMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).modifyTitle(changeComponentValue(7, "Change title", ((Transfer_module_90_degree) component).getCurrentName())));
             changeValue1ComponentMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).modifyH(changeComponentValue(5, "Change H", ((Transfer_module_90_degree) component).getCurrentH())));
-            changeValue2ComponentMenuItem.setText("Change V1");
+            changeValue2ComponentMenuItem.setText("Speed(V1)");
             changeValue2ComponentMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).modifyV(1, changeComponentValue(5, "Change V1", ((Transfer_module_90_degree) component).getCurrentV(1))));
-            changeValue3ComponentMenuItem.setText("Change V2");
+            changeValue3ComponentMenuItem.setText("Speed(V2)");
             changeValue3ComponentMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).modifyV(2, changeComponentValue(5, "Change V2", ((Transfer_module_90_degree) component).getCurrentV(2))));
         }
 
@@ -389,10 +399,16 @@ public class ConfigurationView extends MainView {
         return result.orElse(currentValue);
     }
 
-    private static String changeComponentPitch(int choiceCase, String currentValue) {
+    private static String changeComponentValue(int choiceCase, String currentValue) {
         List<String> choices = Arrays.asList("60", "90", "120");
         if (choiceCase == 2) {
             choices = Arrays.asList("30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45");
+        }
+        if (choiceCase == 3) {
+            choices = Arrays.asList("Right", "Left", "Right/Left");
+        }
+        if (choiceCase == 4) {
+            choices = Arrays.asList("30", "45", "60", "90");
         }
         ChoiceDialog<String> dialog = new ChoiceDialog<>(currentValue, choices);
         dialog.initStyle(StageStyle.UTILITY);
@@ -450,19 +466,19 @@ public class ConfigurationView extends MainView {
             ((Diverter) component).resetComponent();
         }
         if (component instanceof Gravity_roller_conveyor) {
-            ((Gravity_roller_conveyor) component).resetRotation();
+            ((Gravity_roller_conveyor) component).resetComponent();
         }
         if (component instanceof Merge_conveyor) {
-            ((Merge_conveyor) component).resetRotation();
+            ((Merge_conveyor) component).resetComponent();
         }
         if (component instanceof Motorized_roller_conveyor) {
             ((Motorized_roller_conveyor) component).resetComponent();
         }
         if (component instanceof Skew_roller_conveyor) {
-            ((Skew_roller_conveyor) component).resetRotation();
+            ((Skew_roller_conveyor) component).resetComponent();
         }
         if (component instanceof Transfer_module_90_degree) {
-            ((Transfer_module_90_degree) component).resetRotation();
+            ((Transfer_module_90_degree) component).resetComponent();
         }
     }
 

@@ -11,11 +11,10 @@ module com.convofig.conveyorbeltmaster {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
-    requires com.almasb.fxgl.all;
     requires java.desktop;
     requires org.apache.poi.poi;
     requires org.apache.poi.ooxml;
-    requires annotations;
+    requires org.apache.logging.log4j;
 
     opens com.convofig.conveyorbeltmaster to javafx.fxml;
     exports com.convofig.conveyorbeltmaster;

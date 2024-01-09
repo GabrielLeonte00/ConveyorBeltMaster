@@ -27,7 +27,7 @@ public class Skew_roller_conveyor extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
-    private int revert = 1;
+    private int mirror = 1;
     private Rectangle bounds;
     private Rectangle dragBounds;
     private Group group, textGroup;
@@ -52,7 +52,6 @@ public class Skew_roller_conveyor extends Label {
         Component_name = "Skew roller conveyor";
         Type_code = "G5304";
         excelData = new String[22];
-        Arrays.fill(excelData, "");
         switch (preScaleHeight) {
             case 417:
                 skewRotation = 15;
@@ -102,7 +101,7 @@ public class Skew_roller_conveyor extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + H + "," + V + "," + P + "," + title + "," + control + "," + PolySide + "," + revert;
+        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + H + "," + V + "," + P + "," + title + "," + control + "," + PolySide + "," + mirror;
     }
 
     public double getWidthForLoad() {
@@ -122,6 +121,7 @@ public class Skew_roller_conveyor extends Label {
     }
 
     void populateData() {
+        Arrays.fill(excelData, "");
         excelData[0] = title;
         excelData[1] = Type_code;
         excelData[2] = Component_name;
@@ -148,33 +148,43 @@ public class Skew_roller_conveyor extends Label {
     public void modifyTitle(String newTitle) {
         title = newTitle;
         titleText.setText(newTitle);
+        populateData();
     }
 
     public void modifyH(String newValue) {
         H = newValue;
         textH.setText("H = " + newValue);
+        populateData();
     }
 
     public void modifyV(String newValue) {
         V = newValue;
         textV.setText("V = " + newValue);
+        populateData();
     }
 
     public void modifyP(String newValue) {
         P = newValue;
         textP.setText("P = " + newValue);
+        populateData();
     }
 
-    public void revertComponent() {
-        revert = -revert;
-        textGroup.setScaleX(revert);
-        group.setScaleX(revert);
+    public void mirrorText() {
+        mirror = -mirror;
+        textGroup.setScaleX(mirror);
+        titleText.setScaleY(mirror);
+        textH.setScaleY(mirror);
+        textV.setScaleY(mirror);
+        textP.setScaleY(mirror);
     }
 
-    public void updateRevert(int revert) {
-        this.revert = revert;
-        textGroup.setScaleX(revert);
-        group.setScaleX(revert);
+    public void updateMirrorText(int mirror) {
+        this.mirror = mirror;
+        textGroup.setScaleX(mirror);
+        titleText.setScaleY(mirror);
+        textH.setScaleY(mirror);
+        textV.setScaleY(mirror);
+        textP.setScaleY(mirror);
     }
 
     public void changeSide() {
@@ -186,6 +196,7 @@ public class Skew_roller_conveyor extends Label {
         createComponent();
         populateData();
         updateRotation();
+        updateMirrorText(mirror);
     }
 
     public String getCurrentName() {
@@ -274,8 +285,6 @@ public class Skew_roller_conveyor extends Label {
         dragBounds.setVisible(false);
         group.getChildren().add(dragBounds);
 
-        textGroup.setScaleX(revert);
-        group.setScaleX(revert);
         setGraphic(group);
     }
 
@@ -284,7 +293,7 @@ public class Skew_roller_conveyor extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-        copy.updateRevert(revert);
+        copy.updateMirrorText(mirror);
         return copy;
     }
 
@@ -293,9 +302,10 @@ public class Skew_roller_conveyor extends Label {
         updateRotation();
     }
 
-    public void resetRotation() {
+    public void resetComponent() {
         rotation = 0;
         updateRotation();
+        updateMirrorText(1);
     }
 
     private void updateRotation() {

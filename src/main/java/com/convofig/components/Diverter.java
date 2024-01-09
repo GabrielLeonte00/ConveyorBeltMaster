@@ -26,12 +26,12 @@ public class Diverter extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
-    private int revert = 1;
+    private int mirror = 1;
     private final double scaleFactor;
     private Text titleText, tBox, textH, textV, textAngle;
     private Rectangle bounds;
     private Rectangle dragBounds;
-    private Group group, textGroup;
+    private Group group;
 
     public Diverter(double scaleFactor, int preScaleWidth, int preScaleHeight, double Width, double Height, String PolySide, String H, String V, String Diverting_Angle, String title, String Diverting_Direction) {
         super();
@@ -50,13 +50,12 @@ public class Diverter extends Label {
         Component_name = "Diverter";
         Type_code = "ST01";
         excelData = new String[22];
-        Arrays.fill(excelData, "");
         createComponent();
         populateData();
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + PolySide + "," + H + "," + V + "," + Diverting_Angle + "," + title + "," + Diverting_Direction + "," + revert;
+        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + PolySide + "," + H + "," + V + "," + Diverting_Angle + "," + title + "," + Diverting_Direction + "," + mirror;
     }
 
     public double getWidthForLoad() {
@@ -76,15 +75,15 @@ public class Diverter extends Label {
     }
 
     void populateData() {
+        Arrays.fill(excelData, "");
         excelData[0] = title;
         excelData[1] = Type_code;
         excelData[2] = Component_name;
         excelData[3] = "1";
         excelData[4] = Integer.toString(preScaleWidth);
-        excelData[5] = preScaleHeight + "+70";
+        excelData[5] = Integer.toString(preScaleHeight);
         excelData[6] = V;
         excelData[7] = H;
-        //excelData[12] = P;
         if (Objects.equals(PolySide, "Left")) excelData[16] = "L";
         else excelData[16] = "R";
     }
@@ -96,34 +95,57 @@ public class Diverter extends Label {
     public void modifyTitle(String newTitle) {
         title = newTitle;
         titleText.setText(newTitle);
+        populateData();
     }
 
     public void modifyH(String newValue) {
         H = newValue;
         textH.setText("H = " + newValue);
+        populateData();
     }
 
     public void modifyV(String newValue) {
         V = newValue;
         textV.setText("V = " + newValue);
+        populateData();
     }
 
     public void modifyDiverting_Angle(String newValue) {
+        group.getChildren().clear();
         Diverting_Angle = newValue;
+        textAngle.setText(newValue);
+        createComponent();
+        populateData();
+        updateRotation();
+        updateMirrorText(mirror);
     }
 
-    public void revertComponent() {
-        revert = -revert;
-        textGroup.setScaleX(revert);
-        tBox.setScaleX(revert);
-        group.setScaleX(revert);
+    public void mirrorText() {
+        mirror = -mirror;
+        tBox.setScaleX(mirror);
+        tBox.setScaleY(mirror);
+        titleText.setScaleX(mirror);
+        titleText.setScaleY(mirror);
+        textH.setScaleX(mirror);
+        textH.setScaleY(mirror);
+        textV.setScaleX(mirror);
+        textV.setScaleY(mirror);
+        textAngle.setScaleX(mirror);
+        textAngle.setScaleY(mirror);
     }
 
-    public void updateRevert(int revert) {
-        this.revert = revert;
-        textGroup.setScaleX(revert);
-        tBox.setScaleX(revert);
-        group.setScaleX(revert);
+    public void updateMirrorText(int mirror) {
+        this.mirror = mirror;
+        tBox.setScaleX(mirror);
+        tBox.setScaleY(mirror);
+        titleText.setScaleX(mirror);
+        titleText.setScaleY(mirror);
+        textH.setScaleX(mirror);
+        textH.setScaleY(mirror);
+        textV.setScaleX(mirror);
+        textV.setScaleY(mirror);
+        textAngle.setScaleX(mirror);
+        textAngle.setScaleY(mirror);
     }
 
     public void changeSide() {
@@ -135,6 +157,16 @@ public class Diverter extends Label {
         createComponent();
         populateData();
         updateRotation();
+        updateMirrorText(mirror);
+    }
+
+    public void changeDirection(String newDirection) {
+        group.getChildren().clear();
+        Diverting_Direction = newDirection;
+        createComponent();
+        populateData();
+        updateRotation();
+        updateMirrorText(mirror);
     }
 
     public String getCurrentName() {
@@ -151,6 +183,10 @@ public class Diverter extends Label {
 
     public String getCurrentDiverting_Angle() {
         return Diverting_Angle;
+    }
+
+    public String getCurrentDirection() {
+        return Diverting_Direction;
     }
 
     private void createComponent() {
@@ -189,7 +225,7 @@ public class Diverter extends Label {
 
         groupDiverter.getChildren().add(drawArrow(100 * scaleFactor, Height / 2));
 
-        textGroup = new Group();
+        Group textGroup = new Group();
 
         double x = Width / 2;
 
@@ -300,9 +336,6 @@ public class Diverter extends Label {
         dragBounds.setVisible(false);
         group.getChildren().add(dragBounds);
 
-        textGroup.setScaleX(revert);
-        tBox.setScaleX(revert);
-        group.setScaleX(revert);
         setGraphic(group);
     }
 
@@ -311,7 +344,7 @@ public class Diverter extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-        copy.updateRevert(revert);
+        copy.updateMirrorText(mirror);
         return copy;
     }
 
@@ -323,7 +356,7 @@ public class Diverter extends Label {
     public void resetComponent() {
         rotation = 0;
         updateRotation();
-        updateRevert(1);
+        updateMirrorText(1);
     }
 
     private void updateRotation() {

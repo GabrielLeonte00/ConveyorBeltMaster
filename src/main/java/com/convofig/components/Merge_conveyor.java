@@ -27,7 +27,7 @@ public class Merge_conveyor extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
-    private int revert = 1;
+    private int mirror = 1;
     private final double scaleFactor;
     private Text titleText, textH, textV, textP;
     private final String control;
@@ -83,13 +83,12 @@ public class Merge_conveyor extends Label {
         Component_name = "Merge conveyor";
         Type_code = "G5304";
         excelData = new String[22];
-        Arrays.fill(excelData, "");
         createComponent();
         populateData();
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preScaleHeight + "," + Height + "," + PolySide + "," + H + "," + V + "," + P + "," + title + "," + control + "," + revert;
+        return rotation + "," + scaleFactor + "," + preScaleHeight + "," + Height + "," + PolySide + "," + H + "," + V + "," + P + "," + title + "," + control + "," + mirror;
     }
 
     public double getWidthForLoad() {
@@ -109,12 +108,13 @@ public class Merge_conveyor extends Label {
     }
 
     void populateData() {
+        Arrays.fill(excelData, "");
         excelData[0] = title;
         excelData[1] = Type_code;
         excelData[2] = Component_name;
         excelData[3] = "1";
         excelData[4] = Integer.toString(preScaleWidth);
-        excelData[5] = preScaleHeight + "+70";
+        excelData[5] = Integer.toString(preScaleHeight);
         excelData[6] = V;
         excelData[7] = H;
         excelData[12] = P;
@@ -135,33 +135,43 @@ public class Merge_conveyor extends Label {
     public void modifyTitle(String newTitle) {
         title = newTitle;
         titleText.setText(newTitle);
+        populateData();
     }
 
     public void modifyH(String newValue) {
         H = newValue;
         textH.setText("H = " + newValue);
+        populateData();
     }
 
     public void modifyV(String newValue) {
         V = newValue;
         textV.setText("V = " + newValue);
+        populateData();
     }
 
     public void modifyP(String newValue) {
         P = newValue;
         textP.setText("P = " + newValue);
+        populateData();
     }
 
-    public void revertComponent() {
-        revert = -revert;
-        textGroup.setScaleX(revert);
-        group.setScaleX(revert);
+    public void mirrorText() {
+        mirror = -mirror;
+        textGroup.setScaleX(mirror);
+        titleText.setScaleY(mirror);
+        textH.setScaleY(mirror);
+        textV.setScaleY(mirror);
+        textP.setScaleY(mirror);
     }
 
-    public void updateRevert(int revert) {
-        this.revert = revert;
-        textGroup.setScaleX(revert);
-        group.setScaleX(revert);
+    public void updateMirrorText(int mirror) {
+        this.mirror = mirror;
+        textGroup.setScaleX(mirror);
+        titleText.setScaleY(mirror);
+        textH.setScaleY(mirror);
+        textV.setScaleY(mirror);
+        textP.setScaleY(mirror);
     }
 
     public void changeSide() {
@@ -173,6 +183,7 @@ public class Merge_conveyor extends Label {
         createComponent();
         populateData();
         updateRotation();
+        updateMirrorText(mirror);
     }
 
     public String getCurrentName() {
@@ -301,8 +312,6 @@ public class Merge_conveyor extends Label {
         dragBounds.setVisible(false);
         group.getChildren().add(dragBounds);
 
-        textGroup.setScaleX(revert);
-        group.setScaleX(revert);
         setGraphic(group);
     }
 
@@ -311,7 +320,7 @@ public class Merge_conveyor extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-        copy.updateRevert(revert);
+        copy.updateMirrorText(mirror);
         return copy;
     }
 
@@ -320,9 +329,10 @@ public class Merge_conveyor extends Label {
         updateRotation();
     }
 
-    public void resetRotation() {
+    public void resetComponent() {
         rotation = 0;
         updateRotation();
+        updateMirrorText(1);
     }
 
     private void updateRotation() {

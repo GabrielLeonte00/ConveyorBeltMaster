@@ -21,7 +21,6 @@ import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
-import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -41,6 +40,7 @@ public class MainView extends MainApplication {
     private final double scaleFactor = 0.5;
     private double xOffset = 0;
     private double yOffset = 0;
+    private boolean validDrag = false;
 
     @FXML
     private ImageView mainImage;
@@ -232,6 +232,9 @@ public class MainView extends MainApplication {
         MenuItem zoomResetMenu = new MenuItem("Reset zoom");
         zoomResetMenu.setOnAction(actionEvent -> zoomResetMethod());
         drawMenu.getItems().add(zoomResetMenu);
+        MenuItem resetPosition = new MenuItem("Reset position");
+        resetPosition.setOnAction(actionEvent -> resetPositionMethod());
+        drawMenu.getItems().add(resetPosition);
 
         drawPane.setOnMousePressed(e -> {
             if (e.getButton() == MouseButton.SECONDARY && e.getTarget() instanceof Pane) {
@@ -411,7 +414,11 @@ public class MainView extends MainApplication {
 
     void getOffsetsForMove() {
         mainPane.setOnMousePressed(e -> {
-            if (e.isPrimaryButtonDown()) {
+            if (e.isPrimaryButtonDown() || e.isMiddleButtonDown()) {
+                Node target = e.getPickResult().getIntersectedNode();
+
+                validDrag = target.equals(drawPane);
+
                 xOffset = e.getSceneX() - drawPane.getLayoutX();
                 yOffset = e.getSceneY() - drawPane.getLayoutY();
             }
@@ -420,64 +427,60 @@ public class MainView extends MainApplication {
 
     void addMovingDrawingPane() {
         drawPane.setOnMouseDragged(e -> {
-            if (e.isPrimaryButtonDown()) {
-                Node target = e.getPickResult().getIntersectedNode();
-
-                // Check if the mouse press is not on a component inside drawPane
-                if (target != null && !target.equals(drawPane)) {
-                    // Pressed on a component inside drawPane, do not move drawPane
-                    return;
-                }
-
+            if ((e.isPrimaryButtonDown() && validDrag) || e.isMiddleButtonDown()) {
                 double x = e.getSceneX() - xOffset;
                 double y = e.getScreenY() - yOffset;
                 drawPane.setLayoutX(x);
                 drawPane.setLayoutY(y);
             }
         });
+        drawPane.setOnMouseReleased(e -> validDrag = false);
     }
 
     @FXML
     void saveMethod() {
-        // Set the initial directory inside the src folder
-        String initialPath = "src/main/resources/saves";
-        File initialDirectory = new File(initialPath);
+        if (drawPane.getChildren().isEmpty()) {
+            emptyWarning();
+        } else {
+            // Set the initial directory inside the src folder
+            String initialPath = "src/main/resources/saves";
+            File initialDirectory = new File(initialPath);
 
-        // Create a FileChooser
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save draft");
-        fileChooser.setInitialDirectory(initialDirectory);
+            // Create a FileChooser
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save draft");
+            fileChooser.setInitialDirectory(initialDirectory);
 
-        // Set the extension filter (optional)
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
-        fileChooser.getExtensionFilters().add(extFilter);
+            // Set the extension filter (optional)
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
+            fileChooser.getExtensionFilters().add(extFilter);
 
-        // Show the Save File dialog
-        File file = fileChooser.showSaveDialog(getStage());
+            // Show the Save File dialog
+            File file = fileChooser.showSaveDialog(getStage());
 
-        if (file != null) {
+            if (file != null) {
+                String drawPaneDimensions = (drawPane.getWidth() - initialWidth) + "," + (drawPane.getHeight() - initialHeight);
+                writeDataToFile1(file, drawPaneDimensions);
 
-            String drawPaneDimensions = (drawPane.getWidth() - initialWidth) + "," + (drawPane.getHeight() - initialHeight);
-            writeDataToFile1(file, drawPaneDimensions);
+                drawPane.getChildren().forEach(component -> {
+                    if (component instanceof Curve_roller_conveyor)
+                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Curve_roller_conveyor) component).getDataForSave());
+                    if (component instanceof Diverter)
+                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Diverter) component).getDataForSave());
+                    if (component instanceof Gravity_roller_conveyor)
+                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Gravity_roller_conveyor) component).getDataForSave());
+                    if (component instanceof Merge_conveyor)
+                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Merge_conveyor) component).getDataForSave());
+                    if (component instanceof Motorized_roller_conveyor)
+                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Motorized_roller_conveyor) component).getDataForSave());
+                    if (component instanceof Skew_roller_conveyor)
+                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Skew_roller_conveyor) component).getDataForSave());
+                    if (component instanceof Transfer_module_90_degree)
+                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Transfer_module_90_degree) component).getDataForSave());
+
+                });
+            }
         }
-
-        drawPane.getChildren().forEach(component -> {
-            if (component instanceof Curve_roller_conveyor)
-                writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Curve_roller_conveyor) component).getDataForSave());
-            if (component instanceof Diverter)
-                writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Diverter) component).getDataForSave());
-            if (component instanceof Gravity_roller_conveyor)
-                writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Gravity_roller_conveyor) component).getDataForSave());
-            if (component instanceof Merge_conveyor)
-                writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Merge_conveyor) component).getDataForSave());
-            if (component instanceof Motorized_roller_conveyor)
-                writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Motorized_roller_conveyor) component).getDataForSave());
-            if (component instanceof Skew_roller_conveyor)
-                writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Skew_roller_conveyor) component).getDataForSave());
-            if (component instanceof Transfer_module_90_degree)
-                writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Transfer_module_90_degree) component).getDataForSave());
-
-        });
     }
 
     void writeDataToFile1(File file, String data) {
@@ -557,6 +560,16 @@ public class MainView extends MainApplication {
         return result.isPresent() && result.get() == buttonTypeYes;
     }
 
+    private void emptyWarning() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.initStyle(StageStyle.UTILITY);
+        alert.setGraphic(null);
+        alert.setTitle("Warning");
+        alert.setHeaderText(null);
+        alert.setContentText("Your draft is empty");
+        alert.show();
+    }
+
     void processFile(File file) {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -594,6 +607,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
             newComponent.updateMirrorText(Integer.parseInt(data[12]));
+            newComponent.updateRevert(Integer.parseInt(data[13]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getWidthForLoad());
             drawPane.getChildren().add(newComponent);
         }
@@ -602,7 +616,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
-            newComponent.updateRevert(Integer.parseInt(data[15]));
+            newComponent.updateMirrorText(Integer.parseInt(data[15]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
         }
@@ -611,7 +625,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
-            newComponent.updateRevert(Integer.parseInt(data[13]));
+            newComponent.updateMirrorText(Integer.parseInt(data[13]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
         }
@@ -620,7 +634,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
-            newComponent.updateRevert(Integer.parseInt(data[13]));
+            newComponent.updateMirrorText(Integer.parseInt(data[13]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
 
@@ -630,7 +644,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
-            newComponent.updateRevert(Integer.parseInt(data[16]));
+            newComponent.updateMirrorText(Integer.parseInt(data[16]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
         }
@@ -639,7 +653,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
-            newComponent.updateRevert(Integer.parseInt(data[15]));
+            newComponent.updateMirrorText(Integer.parseInt(data[15]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
 
@@ -649,7 +663,7 @@ public class MainView extends MainApplication {
             newComponent.setLayoutX(Double.parseDouble(data[1]));
             newComponent.setLayoutY(Double.parseDouble(data[2]));
             newComponent.setNewRotation(Integer.parseInt(data[3]));
-            newComponent.updateRevert(Integer.parseInt(data[15]));
+            newComponent.updateMirrorText(Integer.parseInt(data[15]));
             addActionsToComponent(newComponent, newComponent.getWidthForLoad(), newComponent.getHeightLoad());
             drawPane.getChildren().add(newComponent);
         }
@@ -658,7 +672,7 @@ public class MainView extends MainApplication {
     @FXML
     void exportMethod() {
         if (drawPane.getChildren().isEmpty()) {
-            System.out.println("EMPTY");
+            emptyWarning();
         } else {
             double[] bounds = getExportLimits();
             Rectangle2D exportBounds = new Rectangle2D(bounds[0], bounds[1], bounds[2], bounds[3]);
@@ -703,7 +717,7 @@ public class MainView extends MainApplication {
         drawPane.snapshot(snapshotParameters, writableImage);
 
         // Set the initial directory inside the src folder
-        String initialPath = "src/main/resources/export";
+        String initialPath = "exports/drafts";
         File initialDirectory = new File(initialPath);
 
         // Choose a file to save the image
@@ -725,7 +739,6 @@ public class MainView extends MainApplication {
         }
     }
 
-    @NotNull
     private static BufferedImage getBufferedImage(WritableImage writableImage) {
         PixelReader pixelReader = writableImage.getPixelReader();
         int width = (int) writableImage.getWidth();
@@ -749,7 +762,7 @@ public class MainView extends MainApplication {
     @FXML
     void extractExcelMethod() {
         if (drawPane.getChildren().isEmpty()) {
-            System.out.println("Empty");
+            emptyWarning();
         } else {
             exportExcel.startExport(drawPane);
         }

@@ -17,13 +17,14 @@ public class Curve_roller_conveyor extends Label {
     private String V;
     private final String P;
     private final double Width;
-    private final double preWidth;
+    private final int preWidth;
     private String title;
     private final String Component_name;
     private final String Type_code;
-    private final String angle;
+    private String angle;
     private final String[] excelData;
     private int rotation = 0;
+    private int mirror = 1;
     private int revert = 1;
     private Rectangle bounds;
     private Rectangle dragBounds;
@@ -38,7 +39,7 @@ public class Curve_roller_conveyor extends Label {
         this.H = H;
         this.V = V;
         this.title = title;
-        this.preWidth = w;
+        this.preWidth = (int) w;
         this.Width = pW;
         this.control = control;
         Component_name = "Curve roller conveyor";
@@ -46,18 +47,18 @@ public class Curve_roller_conveyor extends Label {
         Type_code = "G5303A";
         P = "72";
         excelData = new String[22];
-        Arrays.fill(excelData, "");
         createComponent();
         populateData();
     }
 
     void populateData() {
+        Arrays.fill(excelData, "");
         excelData[0] = title;
         excelData[1] = Type_code;
         excelData[2] = Component_name;
         excelData[3] = "1";
         excelData[4] = "0";
-        excelData[5] = (int) preWidth + "+70";
+        excelData[5] = Integer.toString(preWidth);
         excelData[6] = V;
         excelData[7] = H;
         excelData[10] = angle;
@@ -71,7 +72,7 @@ public class Curve_roller_conveyor extends Label {
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preWidth + "," + Width + "," + H + "," + V + "," + title + "," + angle + "," + control + "," + revert;
+        return rotation + "," + scaleFactor + "," + preWidth + "," + Width + "," + H + "," + V + "," + title + "," + angle + "," + control + "," + mirror + "," + revert;
     }
 
     public double getWidthForLoad() {
@@ -93,34 +94,58 @@ public class Curve_roller_conveyor extends Label {
     public void modifyTitle(String newValue) {
         title = newValue;
         titleText.setText(newValue);
+        populateData();
     }
 
     public void modifyH(String newValue) {
         H = newValue;
         textH.setText("H = " + newValue);
+        populateData();
     }
 
     public void modifyV(String newValue) {
         V = newValue;
         textV.setText("V = " + newValue);
+        populateData();
+    }
+
+    public void modifyAngle(String newValue) {
+        group.getChildren().clear();
+        angle = newValue;
+        populateData();
+        createComponent();
+        updateRotation();
+        updateMirrorText(mirror);
     }
 
     public void mirrorText() {
-        revert = -revert;
-        textGroup.setScaleX(revert);
-        titleText.setScaleY(revert);
-        textH.setScaleY(revert);
-        textV.setScaleY(revert);
-        textP.setScaleY(revert);
+        mirror = -mirror;
+        textGroup.setScaleX(mirror);
+        titleText.setScaleY(mirror);
+        textH.setScaleY(mirror);
+        textV.setScaleY(mirror);
+        textP.setScaleY(mirror);
     }
 
-    public void updateMirrorText(int revert) {
-        this.revert = revert;
+    public void revert() {
+        revert = -revert;
+        group.setScaleX(revert);
         textGroup.setScaleX(revert);
-        titleText.setScaleY(revert);
-        textH.setScaleY(revert);
-        textV.setScaleY(revert);
-        textP.setScaleY(revert);
+    }
+
+    public void updateRevert(int revert){
+        this.revert = revert;
+        group.setScaleX(revert);
+        textGroup.setScaleX(revert);
+    }
+
+    public void updateMirrorText(int mirror) {
+        this.mirror = mirror;
+        textGroup.setScaleX(mirror);
+        titleText.setScaleY(mirror);
+        textH.setScaleY(mirror);
+        textV.setScaleY(mirror);
+        textP.setScaleY(mirror);
     }
 
     public String getCurrentName() {
@@ -133,6 +158,10 @@ public class Curve_roller_conveyor extends Label {
 
     public String getCurrentV() {
         return V;
+    }
+
+    public String getCurrentAngle() {
+        return angle;
     }
 
 
@@ -246,6 +275,9 @@ public class Curve_roller_conveyor extends Label {
         dragBounds.setStroke(Color.rgb(127, 255, 212, 0.5));
         dragBounds.setVisible(false);
 
+        group.setScaleX(revert);
+        textGroup.setScaleX(revert);
+
         group.getChildren().add(textGroup);
         group.getChildren().add(dragBounds);
         setGraphic(group);
@@ -256,7 +288,8 @@ public class Curve_roller_conveyor extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-        copy.updateMirrorText(revert);
+        copy.updateMirrorText(mirror);
+        copy.updateRevert(revert);
         return copy;
     }
 

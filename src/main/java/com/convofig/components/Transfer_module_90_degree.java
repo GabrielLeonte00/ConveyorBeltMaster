@@ -25,10 +25,10 @@ public class Transfer_module_90_degree extends Label {
     private final String Type_code;
     private final String[] excelData;
     private int rotation = 0;
-    private int revert = 1;
+    private int mirror = 1;
     private Rectangle bounds;
     private Rectangle dragBounds;
-    private Group group, componentGroup;
+    private Group group, textGroup;
     private final double scaleFactor;
     private Text titleText, textH, textV1, textV2;
     private final String control;
@@ -49,13 +49,12 @@ public class Transfer_module_90_degree extends Label {
         Component_name = "90 degree transfer module";
         Type_code = "1TC05";
         excelData = new String[22];
-        Arrays.fill(excelData, "");
         createComponent();
         populateData();
     }
 
     public String getDataForSave() {
-        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + H + "," + V1 + "," + V2 + "," + P + "," + title + "," + control + "," + revert;
+        return rotation + "," + scaleFactor + "," + preScaleWidth + "," + preScaleHeight + "," + Width + "," + Height + "," + H + "," + V1 + "," + V2 + "," + P + "," + title + "," + control + "," + mirror;
     }
 
     public double getWidthForLoad() {
@@ -75,6 +74,7 @@ public class Transfer_module_90_degree extends Label {
     }
 
     void populateData() {
+        Arrays.fill(excelData, "");
         excelData[0] = title;
         excelData[1] = Type_code;
         excelData[2] = Component_name;
@@ -98,11 +98,13 @@ public class Transfer_module_90_degree extends Label {
     public void modifyTitle(String newValue) {
         title = newValue;
         titleText.setText(newValue);
+        populateData();
     }
 
     public void modifyH(String newValue) {
         H = newValue;
         textH.setText("H = " + newValue);
+        populateData();
     }
 
     public void modifyV(int NO, String newValue) {
@@ -113,17 +115,25 @@ public class Transfer_module_90_degree extends Label {
             V2 = newValue;
             textV2.setText("V2 = " + newValue);
         }
+        populateData();
     }
 
-
-    public void revertComponent() {
-        revert = -revert;
-        componentGroup.setScaleX(revert);
+    public void mirrorText() {
+        mirror = -mirror;
+        textGroup.setScaleX(mirror);
+        titleText.setScaleY(mirror);
+        textH.setScaleY(mirror);
+        textV1.setScaleY(mirror);
+        textV2.setScaleY(mirror);
     }
 
-    public void updateRevert(int revert) {
-        this.revert = revert;
-        componentGroup.setScaleX(revert);
+    public void updateMirrorText(int mirror) {
+        this.mirror = mirror;
+        textGroup.setScaleX(mirror);
+        titleText.setScaleY(mirror);
+        textH.setScaleY(mirror);
+        textV1.setScaleY(mirror);
+        textV2.setScaleY(mirror);
     }
 
 
@@ -146,7 +156,7 @@ public class Transfer_module_90_degree extends Label {
     private void createComponent() {
 
         group = new Group();
-        componentGroup = new Group();
+        Group componentGroup = new Group();
 
         bounds = new Rectangle(Width, Height);
         bounds.fillProperty().set(null);
@@ -192,7 +202,7 @@ public class Transfer_module_90_degree extends Label {
         rightSide.setStroke(Color.WHITE);
         componentGroup.getChildren().add(rightSide);
 
-        Group textGroup = new Group();
+        textGroup = new Group();
         titleText = new Text(title);
         titleText.setFill(Color.MAGENTA);
         titleText.setStyle("-fx-font: 16 arial;");
@@ -226,7 +236,6 @@ public class Transfer_module_90_degree extends Label {
         group.getChildren().add(dragBounds);
 
         group.getChildren().add(componentGroup);
-        componentGroup.setScaleX(revert);
         setGraphic(group);
     }
 
@@ -235,7 +244,7 @@ public class Transfer_module_90_degree extends Label {
         copy.setLayoutX(getLayoutX() + getWidth() / 2 + 25); // Example: Adjust the layout for the copy
         copy.setLayoutY(getLayoutY() + getHeight() / 2 + 25);
         copy.setNewRotation(rotation);
-        copy.updateRevert(revert);
+        copy.updateMirrorText(mirror);
         return copy;
     }
 
@@ -244,9 +253,10 @@ public class Transfer_module_90_degree extends Label {
         updateRotation();
     }
 
-    public void resetRotation() {
+    public void resetComponent() {
         rotation = 0;
         updateRotation();
+        updateMirrorText(1);
     }
 
     private void updateRotation() {

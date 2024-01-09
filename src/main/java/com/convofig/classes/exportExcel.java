@@ -1,7 +1,6 @@
 package com.convofig.classes;
 
 import com.convofig.components.*;
-import com.convofig.controllers.MainView;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
@@ -126,7 +125,7 @@ public class exportExcel {
             }
 
             // Set the initial directory inside the src folder
-            String initialPath = "src/main/resources/export";
+            String initialPath = "exports/excels";
             File initialDirectory = new File(initialPath);
 
             // Choose a file to save the image
