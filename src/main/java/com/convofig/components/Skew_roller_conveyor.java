@@ -127,7 +127,7 @@ public class Skew_roller_conveyor extends Label {
         excelData[2] = Component_name;
         excelData[3] = "1";
         excelData[4] = Integer.toString(preScaleWidth);
-        excelData[5] = preScaleHeight + "+70";
+        excelData[5] = Integer.toString(preScaleHeight);
         excelData[6] = V;
         excelData[7] = H;
         excelData[12] = P;
