@@ -20,7 +20,7 @@ public class exportExcel {
         Node[] components = drawPane.getChildren().toArray(new Node[0]);
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Oviso Robotics Equipment List");
+            Sheet sheet = workbook.createSheet("Equipment List");
 
             String[] headerColumns = {"Items#", "Type code", "Description of Commodity", "QTY", "Length", "Width",
                     "Speed", "Inlet height", "Outlet height", "Zone", "Angle", "Row", "Roller pitch",

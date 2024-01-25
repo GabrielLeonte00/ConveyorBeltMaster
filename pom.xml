@@ -152,7 +152,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.convofig.conveyorbeltmaster.MainApplication</mainClass>
+                            <mainClass>com.convofig.conveyorbeltmaster.Launcher</mainClass>
                             <!-- Other configurations -->
                         </configuration>
                     </execution>
@@ -161,17 +161,27 @@
             <!-- Add the maven-jar-plugin for META-INF configuration -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>META-INF/lib/</classpathPrefix>
-                            <mainClass>com.convofig.conveyorbeltmaster.MainApplication</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>
+                                        com.convofig.conveyorbeltmaster.Launcher
+                                    </mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

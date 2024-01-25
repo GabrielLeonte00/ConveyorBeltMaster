@@ -57,7 +57,7 @@ public class Curve_roller_conveyor extends Label {
         excelData[1] = Type_code;
         excelData[2] = Component_name;
         excelData[3] = "1";
-        excelData[4] = "0";
+        excelData[4] = String.valueOf(Math.round((825 + (double) preWidth / 2) * Math.PI / 6));
         excelData[5] = Integer.toString(preWidth);
         excelData[6] = V;
         excelData[7] = H;
@@ -133,7 +133,7 @@ public class Curve_roller_conveyor extends Label {
         textGroup.setScaleX(revert);
     }
 
-    public void updateRevert(int revert){
+    public void updateRevert(int revert) {
         this.revert = revert;
         group.setScaleX(revert);
         textGroup.setScaleX(revert);

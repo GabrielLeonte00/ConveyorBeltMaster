@@ -40,7 +40,4 @@ public class MainApplication extends Application {
         return stage;
     }
 
-    public static void main(String[] args) {
-        launch();
-    }
 }
