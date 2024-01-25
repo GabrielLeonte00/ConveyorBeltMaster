@@ -1,6 +1,7 @@
 package com.convofig.classes;
 
 import com.convofig.components.*;
+import com.convofig.controllers.MainView;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
@@ -12,6 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class exportExcel {
 
@@ -124,14 +126,17 @@ public class exportExcel {
                 }
             }
 
-            // Set the initial directory inside the src folder
-            String initialPath = "exports/excels";
-            File initialDirectory = new File(initialPath);
+            String jarPath = MainView.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            String jarDir = new File(jarPath).getParent();
+            String exportsFolderPath = jarDir + File.separator + "exports" + File.separator + "excels";
+            File exportDirectory = new File(exportsFolderPath);
 
             // Choose a file to save the image
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save excel");
-            fileChooser.setInitialDirectory(initialDirectory);
+            if (exportDirectory.exists()) {
+                fileChooser.setInitialDirectory(exportDirectory);
+            }
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
             File file = fileChooser.showSaveDialog(null);
 
@@ -140,9 +145,9 @@ public class exportExcel {
                 workbook.write(outputStream);
             }
 
-            workbook.close();
-
         } catch (IOException ignored) {
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
 
     }

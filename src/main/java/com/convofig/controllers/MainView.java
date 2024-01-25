@@ -25,6 +25,7 @@ import javafx.util.StringConverter;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -438,18 +439,21 @@ public class MainView extends MainApplication {
     }
 
     @FXML
-    void saveMethod() {
+    void saveMethod() throws URISyntaxException {
         if (drawPane.getChildren().isEmpty()) {
             emptyWarning();
         } else {
-            // Set the initial directory inside the src folder
-            String initialPath = "src/main/resources/saves";
-            File initialDirectory = new File(initialPath);
+            String jarPath = MainView.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            String jarDir = new File(jarPath).getParent();
+            String savesFolderPath = jarDir + File.separator + "saves";
+            File savesDirectory = new File(savesFolderPath);
 
             // Create a FileChooser
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save draft");
-            fileChooser.setInitialDirectory(initialDirectory);
+            if (savesDirectory.exists()) {
+                fileChooser.setInitialDirectory(savesDirectory);
+            }
 
             // Set the extension filter (optional)
             FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
@@ -506,16 +510,18 @@ public class MainView extends MainApplication {
     }
 
     @FXML
-    void loadMethod() {
-        // Set the initial directory to "src/main/resources/saves"
-        String initialPath = "src/main/resources/saves";
-        File initialDirectory = new File(initialPath);
+    void loadMethod() throws URISyntaxException {
+        String jarPath = MainView.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+        String jarDir = new File(jarPath).getParent();
+        String savesFolderPath = jarDir + File.separator + "saves";
+        File savesDirectory = new File(savesFolderPath);
 
         // Create a FileChooser
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load draft");
-        fileChooser.setInitialDirectory(initialDirectory);
-
+        if (savesDirectory.exists()) {
+            fileChooser.setInitialDirectory(savesDirectory);
+        }
         // Set the extension filter to allow only text files (*.txt)
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
         fileChooser.getExtensionFilters().add(extFilter);
@@ -524,7 +530,7 @@ public class MainView extends MainApplication {
         File selectedFile = fileChooser.showOpenDialog(getStage());
 
         if (selectedFile != null) {
-            if (drawPane.getChildren().isEmpty() || drawPane.getChildren().get(0) instanceof ImageView) {
+            if (drawPane.getChildren().isEmpty() || drawPane.getChildren().getFirst() instanceof ImageView) {
                 drawPane.getChildren().clear();
                 newMethod();
                 processFile(selectedFile);
@@ -670,7 +676,7 @@ public class MainView extends MainApplication {
     }
 
     @FXML
-    void exportMethod() {
+    void exportMethod() throws URISyntaxException {
         if (drawPane.getChildren().isEmpty()) {
             emptyWarning();
         } else {
@@ -681,7 +687,7 @@ public class MainView extends MainApplication {
     }
 
     double[] getExportLimits() {
-        Node component = drawPane.getChildren().get(0);
+        Node component = drawPane.getChildren().getFirst();
         double x1 = component.getLayoutX();
         double y1 = component.getLayoutY();
         double x2 = x1 + component.getBoundsInLocal().getWidth();
@@ -704,7 +710,7 @@ public class MainView extends MainApplication {
         return new double[]{x1, y1, exportWidth, exportHeight};
     }
 
-    private void exportImage(Rectangle2D bounds) {
+    private void exportImage(Rectangle2D bounds) throws URISyntaxException {
         // Create a writable image
         WritableImage writableImage = new WritableImage((int) bounds.getWidth(), (int) bounds.getHeight());
         SnapshotParameters snapshotParameters = new SnapshotParameters();
@@ -717,13 +723,17 @@ public class MainView extends MainApplication {
         drawPane.snapshot(snapshotParameters, writableImage);
 
         // Set the initial directory inside the src folder
-        String initialPath = "exports/drafts";
-        File initialDirectory = new File(initialPath);
+        String jarPath = MainView.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+        String jarDir = new File(jarPath).getParent();
+        String exportsFolderPath = jarDir + File.separator + "exports" + File.separator + "drafts";
+        File exportDirectory = new File(exportsFolderPath);
 
         // Choose a file to save the image
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save draft");
-        fileChooser.setInitialDirectory(initialDirectory);
+        if (exportDirectory.exists()) {
+            fileChooser.setInitialDirectory(exportDirectory);
+        }
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG Files", "*.png"));
         File file = fileChooser.showSaveDialog(null);
 
