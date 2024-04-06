@@ -12,7 +12,7 @@ import javafx.scene.text.Text;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Transfer_module_90_degree extends Label {
+public class Transfer_module_90_degree extends Label implements component_interface{
 
     private String H;
     private String V1;

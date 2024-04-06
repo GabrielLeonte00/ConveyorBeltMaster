@@ -9,7 +9,7 @@ import javafx.scene.text.Text;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Motorized_roller_conveyor extends Label {
+public class Motorized_roller_conveyor extends Label implements component_interface{
 
     private String H;
     private String V;

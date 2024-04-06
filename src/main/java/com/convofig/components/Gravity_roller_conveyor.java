@@ -10,7 +10,7 @@ import javafx.scene.text.Text;
 
 import java.util.Arrays;
 
-public class Gravity_roller_conveyor extends Label {
+public class Gravity_roller_conveyor extends Label implements component_interface{
 
     private String H1;
     private String H2;

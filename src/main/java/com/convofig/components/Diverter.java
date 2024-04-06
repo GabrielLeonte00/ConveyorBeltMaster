@@ -12,7 +12,7 @@ import javafx.scene.text.Text;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Diverter extends Label {
+public class Diverter extends Label implements component_interface{
 
     private String H;
     private String V;

@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Merge_conveyor extends Label {
+public class Merge_conveyor extends Label implements component_interface{
 
     private String H;
     private String V;

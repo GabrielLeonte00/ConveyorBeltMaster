@@ -467,21 +467,8 @@ public class MainView extends MainApplication {
                 writeDataToFile1(file, drawPaneDimensions);
 
                 drawPane.getChildren().forEach(component -> {
-                    if (component instanceof Curve_roller_conveyor)
-                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Curve_roller_conveyor) component).getDataForSave());
-                    if (component instanceof Diverter)
-                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Diverter) component).getDataForSave());
-                    if (component instanceof Gravity_roller_conveyor)
-                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Gravity_roller_conveyor) component).getDataForSave());
-                    if (component instanceof Merge_conveyor)
-                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Merge_conveyor) component).getDataForSave());
-                    if (component instanceof Motorized_roller_conveyor)
-                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Motorized_roller_conveyor) component).getDataForSave());
-                    if (component instanceof Skew_roller_conveyor)
-                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Skew_roller_conveyor) component).getDataForSave());
-                    if (component instanceof Transfer_module_90_degree)
-                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((Transfer_module_90_degree) component).getDataForSave());
-
+                    if(component instanceof component_interface)
+                        writeDataToFile2(file, component.getClass().getSimpleName() + "," + component.getLayoutX() + "," + component.getLayoutY() + "," + ((component_interface) component).getDataForSave());
                 });
             }
         }

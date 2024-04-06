@@ -285,94 +285,66 @@ public class ConfigurationView extends MainView {
         removeComponentMenuItem.setOnAction(event -> removeComponent(component));
         contextMenu.getItems().add(removeComponentMenuItem);
 
-        if (component instanceof Motorized_roller_conveyor) {
-            sideComponentMenuItem.setVisible(true);
-            sideComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).changeSide());
-            revertMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).mirrorText());
-            titleComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyTitle(changeComponentValue(7, "Change title", ((Motorized_roller_conveyor) component).getCurrentName())));
-            changeValue1ComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Motorized_roller_conveyor) component).getCurrentH())));
-            changeValue2ComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Motorized_roller_conveyor) component).getCurrentV())));
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyP(changeComponentValue(1, ((Motorized_roller_conveyor) component).getCurrentP())));
-        }
-        if (component instanceof Curve_roller_conveyor) {
-            revertMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).mirrorText());
-            titleComponentMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).modifyTitle(changeComponentValue(7, "Change title", ((Curve_roller_conveyor) component).getCurrentName())));
-            changeValue1ComponentMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Curve_roller_conveyor) component).getCurrentH())));
-            changeValue2ComponentMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Curve_roller_conveyor) component).getCurrentV())));
-            changeValue3ComponentMenuItem.setText("Angle");
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).modifyAngle(changeComponentValue(4, ((Curve_roller_conveyor) component).getCurrentAngle())));
-            sideComponentMenuItem.setVisible(true);
-            sideComponentMenuItem.setText("Direction");
-            sideComponentMenuItem.setOnAction((event -> ((Curve_roller_conveyor) component).revert()));
-        }
-        if (component instanceof Diverter) {
-            sideComponentMenuItem.setVisible(true);
-            sideComponentMenuItem.setOnAction(event -> ((Diverter) component).changeSide());
-            revertMenuItem.setOnAction(event -> ((Diverter) component).mirrorText());
-            titleComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyTitle(changeComponentValue(7, "Change title", ((Diverter) component).getCurrentName())));
-            changeValue1ComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyH(changeComponentValue(5, "Change H", ((Diverter) component).getCurrentH())));
-            changeValue2ComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyV(changeComponentValue(5, "Change V", ((Diverter) component).getCurrentV())));
-            changeValue3ComponentMenuItem.setText("Angle");
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyDiverting_Angle(changeComponentValue(2, ((Diverter) component).getCurrentDiverting_Angle())));
-            changeValue4ComponentMenuItem.setVisible(true);
-            changeValue4ComponentMenuItem.setOnAction(event -> ((Diverter) component).changeDirection(changeComponentValue(3, ((Diverter) component).getCurrentDirection())));
-        }
-        if (component instanceof Gravity_roller_conveyor) {
-            revertMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).mirrorText());
-            titleComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyTitle(changeComponentValue(7, "Change title", ((Gravity_roller_conveyor) component).getCurrentName())));
-            changeValue1ComponentMenuItem.setText("Height(H1)");
-            changeValue1ComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyH(1, changeComponentValue(5, "Change H1", ((Gravity_roller_conveyor) component).getCurrentH(1))));
-            changeValue2ComponentMenuItem.setText("Height(H2)");
-            changeValue2ComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyH(2, changeComponentValue(5, "Change H2", ((Gravity_roller_conveyor) component).getCurrentH(2))));
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyP(changeComponentValue(1, ((Gravity_roller_conveyor) component).getCurrentP())));
-        }
-        if (component instanceof Merge_conveyor) {
-            sideComponentMenuItem.setVisible(true);
-            sideComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).changeSide());
-            revertMenuItem.setOnAction(event -> ((Merge_conveyor) component).mirrorText());
-            titleComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyTitle(changeComponentValue(7, "Change title", ((Merge_conveyor) component).getCurrentName())));
-            changeValue1ComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Merge_conveyor) component).getCurrentH())));
-            changeValue2ComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Merge_conveyor) component).getCurrentV())));
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyP(changeComponentValue(1, ((Merge_conveyor) component).getCurrentP())));
-        }
-        if (component instanceof Skew_roller_conveyor) {
-            sideComponentMenuItem.setVisible(true);
-            sideComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).changeSide());
-            revertMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).mirrorText());
-            titleComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyTitle(changeComponentValue(7, "Change title", ((Skew_roller_conveyor) component).getCurrentName())));
-            changeValue1ComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Skew_roller_conveyor) component).getCurrentH())));
-            changeValue2ComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Skew_roller_conveyor) component).getCurrentV())));
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyP(changeComponentValue(1, ((Skew_roller_conveyor) component).getCurrentP())));
-        }
-        if (component instanceof Transfer_module_90_degree) {
-            revertMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).mirrorText());
-            titleComponentMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).modifyTitle(changeComponentValue(7, "Change title", ((Transfer_module_90_degree) component).getCurrentName())));
-            changeValue1ComponentMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).modifyH(changeComponentValue(5, "Change H", ((Transfer_module_90_degree) component).getCurrentH())));
-            changeValue2ComponentMenuItem.setText("Speed(V1)");
-            changeValue2ComponentMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).modifyV(1, changeComponentValue(5, "Change V1", ((Transfer_module_90_degree) component).getCurrentV(1))));
-            changeValue3ComponentMenuItem.setText("Speed(V2)");
-            changeValue3ComponentMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).modifyV(2, changeComponentValue(5, "Change V2", ((Transfer_module_90_degree) component).getCurrentV(2))));
-        }
+        if (component instanceof component_interface) {
+            titleComponentMenuItem.setOnAction(event -> {((component_interface) component).modifyTitle(changeComponentValue(7,"Change title", ((component_interface) component).getCurrentName()));});
+            revertMenuItem.setOnAction(event -> {((component_interface) component).mirrorText();});
 
+            if (component instanceof Motorized_roller_conveyor) {
+                sideComponentMenuItem.setVisible(true);
+                sideComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).changeSide());changeValue1ComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Motorized_roller_conveyor) component).getCurrentH())));
+                changeValue2ComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Motorized_roller_conveyor) component).getCurrentV())));
+                changeValue3ComponentMenuItem.setOnAction(event -> ((Motorized_roller_conveyor) component).modifyP(changeComponentValue(1, ((Motorized_roller_conveyor) component).getCurrentP())));
+            }
+            if (component instanceof Curve_roller_conveyor) {changeValue1ComponentMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Curve_roller_conveyor) component).getCurrentH())));
+                sideComponentMenuItem.setVisible(true);
+                sideComponentMenuItem.setText("Direction");
+                sideComponentMenuItem.setOnAction((event -> ((Curve_roller_conveyor) component).revert()));
+                changeValue2ComponentMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Curve_roller_conveyor) component).getCurrentV())));
+                changeValue3ComponentMenuItem.setText("Angle");
+                changeValue3ComponentMenuItem.setOnAction(event -> ((Curve_roller_conveyor) component).modifyAngle(changeComponentValue(4, ((Curve_roller_conveyor) component).getCurrentAngle())));
+            }
+            if (component instanceof Diverter) {
+                sideComponentMenuItem.setVisible(true);
+                sideComponentMenuItem.setOnAction(event -> ((Diverter) component).changeSide());changeValue1ComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyH(changeComponentValue(5, "Change H", ((Diverter) component).getCurrentH())));
+                changeValue2ComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyV(changeComponentValue(5, "Change V", ((Diverter) component).getCurrentV())));
+                changeValue3ComponentMenuItem.setText("Angle");
+                changeValue3ComponentMenuItem.setOnAction(event -> ((Diverter) component).modifyDiverting_Angle(changeComponentValue(2, ((Diverter) component).getCurrentDiverting_Angle())));
+                changeValue4ComponentMenuItem.setVisible(true);
+                changeValue4ComponentMenuItem.setOnAction(event -> ((Diverter) component).changeDirection(changeComponentValue(3, ((Diverter) component).getCurrentDirection())));
+            }
+            if (component instanceof Gravity_roller_conveyor) {changeValue1ComponentMenuItem.setText("Height(H1)");
+                changeValue1ComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyH(1, changeComponentValue(5, "Change H1", ((Gravity_roller_conveyor) component).getCurrentH(1))));
+                changeValue2ComponentMenuItem.setText("Height(H2)");
+                changeValue2ComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyH(2, changeComponentValue(5, "Change H2", ((Gravity_roller_conveyor) component).getCurrentH(2))));
+                changeValue3ComponentMenuItem.setOnAction(event -> ((Gravity_roller_conveyor) component).modifyP(changeComponentValue(1, ((Gravity_roller_conveyor) component).getCurrentP())));
+            }
+            if (component instanceof Merge_conveyor) {
+                sideComponentMenuItem.setVisible(true);
+                sideComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).changeSide());changeValue1ComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Merge_conveyor) component).getCurrentH())));
+                changeValue2ComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Merge_conveyor) component).getCurrentV())));
+                changeValue3ComponentMenuItem.setOnAction(event -> ((Merge_conveyor) component).modifyP(changeComponentValue(1, ((Merge_conveyor) component).getCurrentP())));
+            }
+            if (component instanceof Skew_roller_conveyor) {
+                sideComponentMenuItem.setVisible(true);
+                sideComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).changeSide());changeValue1ComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyH(changeComponentValue(5, "Change H", ((Skew_roller_conveyor) component).getCurrentH())));
+                changeValue2ComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyV(changeComponentValue(5, "Change V", ((Skew_roller_conveyor) component).getCurrentV())));
+                changeValue3ComponentMenuItem.setOnAction(event -> ((Skew_roller_conveyor) component).modifyP(changeComponentValue(1, ((Skew_roller_conveyor) component).getCurrentP())));
+            }
+            if (component instanceof Transfer_module_90_degree) {changeValue1ComponentMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).modifyH(changeComponentValue(5, "Change H", ((Transfer_module_90_degree) component).getCurrentH())));
+                changeValue2ComponentMenuItem.setText("Speed(V1)");
+                changeValue2ComponentMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).modifyV(1, changeComponentValue(5, "Change V1", ((Transfer_module_90_degree) component).getCurrentV(1))));
+                changeValue3ComponentMenuItem.setText("Speed(V2)");
+                changeValue3ComponentMenuItem.setOnAction(event -> ((Transfer_module_90_degree) component).modifyV(2, changeComponentValue(5, "Change V2", ((Transfer_module_90_degree) component).getCurrentV(2))));
+            }
+        }
         return contextMenu;
     }
 
     private static void copyComponent(Node component, double width, double height) {
         Node copy = null;
-        if (component instanceof Curve_roller_conveyor)
-            copy = ((Curve_roller_conveyor) component).copyComponent();
-        if (component instanceof Diverter)
-            copy = ((Diverter) component).copyComponent();
-        if (component instanceof Gravity_roller_conveyor)
-            copy = ((Gravity_roller_conveyor) component).copyComponent();
-        if (component instanceof Merge_conveyor)
-            copy = ((Merge_conveyor) component).copyComponent();
-        if (component instanceof Motorized_roller_conveyor)
-            copy = ((Motorized_roller_conveyor) component).copyComponent();
-        if (component instanceof Skew_roller_conveyor)
-            copy = ((Skew_roller_conveyor) component).copyComponent();
-        if (component instanceof Transfer_module_90_degree)
-            copy = ((Transfer_module_90_degree) component).copyComponent();
+        if (component instanceof component_interface) {
+            copy = (Node) ((component_interface) component).copyComponent();
+        }
 
         if (copy != null) {
             addActionsToComponent(copy, width, height);
@@ -421,37 +393,14 @@ public class ConfigurationView extends MainView {
     }
 
     private static void dragBoundsVisibleTrue(Node component) {
-        if (component instanceof Motorized_roller_conveyor)
-            ((Motorized_roller_conveyor) component).mouseEnteredDragZone();
-        if (component instanceof Curve_roller_conveyor)
-            ((Curve_roller_conveyor) component).mouseEnteredDragZone();
-        if (component instanceof Diverter)
-            ((Diverter) component).mouseEnteredDragZone();
-        if (component instanceof Gravity_roller_conveyor)
-            ((Gravity_roller_conveyor) component).mouseEnteredDragZone();
-        if (component instanceof Merge_conveyor)
-            ((Merge_conveyor) component).mouseEnteredDragZone();
-        if (component instanceof Skew_roller_conveyor)
-            ((Skew_roller_conveyor) component).mouseEnteredDragZone();
-        if (component instanceof Transfer_module_90_degree)
-            ((Transfer_module_90_degree) component).mouseEnteredDragZone();
+        if (component instanceof component_interface)
+            ((component_interface) component).mouseEnteredDragZone();
     }
 
     private static void dragBoundsVisibleFalse(Node component) {
-        if (component instanceof Motorized_roller_conveyor)
-            ((Motorized_roller_conveyor) component).mouseExitedDragZone();
-        if (component instanceof Curve_roller_conveyor)
-            ((Curve_roller_conveyor) component).mouseExitedDragZone();
-        if (component instanceof Diverter)
-            ((Diverter) component).mouseExitedDragZone();
-        if (component instanceof Gravity_roller_conveyor)
-            ((Gravity_roller_conveyor) component).mouseExitedDragZone();
-        if (component instanceof Merge_conveyor)
-            ((Merge_conveyor) component).mouseExitedDragZone();
-        if (component instanceof Skew_roller_conveyor)
-            ((Skew_roller_conveyor) component).mouseExitedDragZone();
-        if (component instanceof Transfer_module_90_degree)
-            ((Transfer_module_90_degree) component).mouseExitedDragZone();
+        if (component instanceof component_interface) {
+            ((component_interface) component).mouseExitedDragZone();
+        }
     }
 
     private static void removeComponent(Node component) {
@@ -459,26 +408,8 @@ public class ConfigurationView extends MainView {
     }
 
     private static void clearComponent(Node component) {
-        if (component instanceof Curve_roller_conveyor) {
-            ((Curve_roller_conveyor) component).resetComponent();
-        }
-        if (component instanceof Diverter) {
-            ((Diverter) component).resetComponent();
-        }
-        if (component instanceof Gravity_roller_conveyor) {
-            ((Gravity_roller_conveyor) component).resetComponent();
-        }
-        if (component instanceof Merge_conveyor) {
-            ((Merge_conveyor) component).resetComponent();
-        }
-        if (component instanceof Motorized_roller_conveyor) {
-            ((Motorized_roller_conveyor) component).resetComponent();
-        }
-        if (component instanceof Skew_roller_conveyor) {
-            ((Skew_roller_conveyor) component).resetComponent();
-        }
-        if (component instanceof Transfer_module_90_degree) {
-            ((Transfer_module_90_degree) component).resetComponent();
+        if (component instanceof component_interface) {
+            ((component_interface) component).resetComponent();
         }
     }
 
@@ -497,26 +428,8 @@ public class ConfigurationView extends MainView {
         try {
             int rotationAngle = Integer.parseInt(angle);
             if (rotationAngle >= -360 && rotationAngle <= 360) {
-                if (component instanceof Curve_roller_conveyor) {
-                    ((Curve_roller_conveyor) component).setNewRotation(rotationAngle);
-                }
-                if (component instanceof Diverter) {
-                    ((Diverter) component).setNewRotation(rotationAngle);
-                }
-                if (component instanceof Gravity_roller_conveyor) {
-                    ((Gravity_roller_conveyor) component).setNewRotation(rotationAngle);
-                }
-                if (component instanceof Merge_conveyor) {
-                    ((Merge_conveyor) component).setNewRotation(rotationAngle);
-                }
-                if (component instanceof Motorized_roller_conveyor) {
-                    ((Motorized_roller_conveyor) component).setNewRotation(rotationAngle);
-                }
-                if (component instanceof Skew_roller_conveyor) {
-                    ((Skew_roller_conveyor) component).setNewRotation(rotationAngle);
-                }
-                if (component instanceof Transfer_module_90_degree) {
-                    ((Transfer_module_90_degree) component).setNewRotation(rotationAngle);
+                if (component instanceof component_interface) {
+                    ((component_interface) component).setNewRotation(rotationAngle);
                 }
             } else {
                 showWarning("Please enter a number between -360 and 360.");
