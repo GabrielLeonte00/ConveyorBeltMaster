@@ -15,6 +15,7 @@ module com.convofig.conveyorbeltmaster {
     requires org.apache.poi.poi;
     requires org.apache.poi.ooxml;
     requires org.apache.logging.log4j;
+    requires commons.math3;
 
     opens com.convofig.conveyorbeltmaster to javafx.fxml;
     exports com.convofig.conveyorbeltmaster;
